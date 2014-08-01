@@ -177,7 +177,7 @@ module AllureRubyApi
       end
 
       def validate_xml(xml)
-        xsd = Nokogiri::XML::Schema(File.read(Pathname.new(File.dirname(__FILE__)).join("../../allure-model-#{AllureRubyApi::Version::STRING}.xsd")))
+        xsd = Nokogiri::XML::Schema(File.read(Pathname.new(File.dirname(__FILE__)).join("../../allure-model-#{AllureRubyApi::Version::ALLURE}.xsd")))
         doc = Nokogiri::XML(xml)
 
         xsd.validate(doc).each do |error|
