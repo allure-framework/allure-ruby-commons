@@ -74,7 +74,7 @@ module AllureRubyApi
         step = opts[:step]
         file = opts[:file]
         title = opts[:title] || file.basename
-        puts "Adding attachment #{opts[:title]} to #{suite}.#{test}#{step.nil ? "" : ".#{step}"}"
+        puts "Adding attachment #{opts[:title]} to #{suite}.#{test}#{step.nil? ? "" : ".#{step}"}"
         dir = Pathname.new(config.output_dir)
         FileUtils.mkdir_p(dir)
         file_extname = File.extname(file.path.downcase)
