@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    allure-ruby-api (0.5)
+    allure-ruby-api (0.6)
       mimemagic
       nokogiri (~> 1.6.0)
       rspec (~> 2.14.0)

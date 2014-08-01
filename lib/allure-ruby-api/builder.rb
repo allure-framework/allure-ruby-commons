@@ -75,7 +75,7 @@ module AllureRubyApi
         file = opts[:file]
         title = opts[:title] || file.basename
         puts "Adding attachment #{opts[:title]} to #{suite}.#{test}#{step.nil? ? "" : ".#{step}"}"
-        dir = Pathname.new(config.output_dir)
+        dir = Pathname.new(Dir.pwd).join(config.output_dir)
         FileUtils.mkdir_p(dir)
         file_extname = File.extname(file.path.downcase)
         mime_type = opts[:mime_type] || MimeMagic.by_path(file.path) || "text/plain"
@@ -85,6 +85,8 @@ module AllureRubyApi
             :type => mime_type,
             :title => title,
             :source => attachment.basename,
+            :file => attachment.basename,
+            :target => attachment.basename,
             :size => File.stat(attachment).size
         }
         if step.nil?
@@ -110,8 +112,7 @@ module AllureRubyApi
         end
       end
 
-      def build!(opts = {:empty_dir => true}, &block)
-        FileUtils.rm_rf config.output_dir if opts[:empty_dir]
+      def build!(opts = {}, &block)
         suites_xml = []
         self.suites.each do |suite_title, suite|
           builder = Nokogiri::XML::Builder.new do |xml|
