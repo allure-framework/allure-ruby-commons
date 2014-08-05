@@ -9,7 +9,7 @@ you can just create the report of any other kind using the basic Allure terms.
 Add the dependency to your Gemfile
 
 ```ruby
- gem 'allure-ruby-api'
+ gem 'allure-ruby-adaptor-api'
 ```
 
 ## Advanced options
