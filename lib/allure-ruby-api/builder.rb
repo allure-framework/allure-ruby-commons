@@ -10,7 +10,7 @@ module AllureRubyApi
       attr_accessor :suites
       MUTEX = Mutex.new
 
-      def start_suite(suite, labels = [:severity => :normal])
+      def start_suite(suite, labels = {:severity => :normal})
         init_suites
         MUTEX.synchronize do
           puts "Starting case_or_suite #{suite} with labels #{labels}"
@@ -23,7 +23,7 @@ module AllureRubyApi
         end
       end
 
-      def start_test(suite, test, labels = [:severity => :normal])
+      def start_test(suite, test, labels = {:severity => :normal})
         MUTEX.synchronize do
           puts "Starting test #{suite}.#{test} with labels #{labels}"
           self.suites[suite][:tests][test] = {
