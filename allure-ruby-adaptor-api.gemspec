@@ -1,15 +1,15 @@
 # -*- encoding: utf-8 -*-
 $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
-require "allure-ruby-api/version"
+require "allure-ruby-adaptor-api/version"
 
 Gem::Specification.new do |s|
-  s.name          = 'allure-ruby-api'
-  s.version       = AllureRubyApi::Version::STRING
+  s.name          = 'allure-ruby-adaptor-api'
+  s.version       = AllureRubyAdaptorApi::Version::STRING
   s.platform         = Gem::Platform::RUBY
   s.authors       = ['Ilya Sadykov']
   s.email         = ['smecsia@yandex-team.ru']
   s.description   = %q{This is a helper library containing the basics for any ruby-based Allure adaptor.}
-  s.summary       = "allure-ruby-api-#{AllureRubyApi::Version::STRING}"
+  s.summary       = "allure-ruby-adaptor-api-#{AllureRubyAdaptorApi::Version::STRING}"
   s.homepage      = 'http://allure.qatools.ru'
   s.license       = 'Apache2'
 

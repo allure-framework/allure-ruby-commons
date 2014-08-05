@@ -1,6 +1,6 @@
 require 'rspec'
-require 'allure-ruby-api'
+require 'allure-ruby-adaptor-api'
 
-AllureRubyApi.configure do |c|
+AllureRubyAdaptorApi.configure do |c|
   c.output_dir = "allure"
 end

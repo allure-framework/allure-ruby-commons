@@ -1,6 +1,6 @@
 require 'digest'
 require 'mimemagic'
-module AllureRubyApi
+module AllureRubyAdaptorApi
   module DSL
 
 
@@ -22,7 +22,7 @@ module AllureRubyApi
       FileUtils.cp(file.path, attachment)
       suite = self.example.metadata[:example_group][:description_args].first
       test = self.example.metadata[:description]
-      AllureRubyApi::Builder.add_attachment(suite, test, {
+      AllureRubyAdaptorApi::Builder.add_attachment(suite, test, {
           :type => type,
           :title => title,
           :source => attachment.basename,

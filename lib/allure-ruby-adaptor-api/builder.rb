@@ -3,7 +3,7 @@ require 'mimemagic'
 require 'nokogiri'
 require 'uuid'
 
-module AllureRubyApi
+module AllureRubyAdaptorApi
 
   class Builder
     class << self
@@ -164,7 +164,7 @@ module AllureRubyApi
       private
 
       def config
-        AllureRubyApi::Config
+        AllureRubyAdaptorApi::Config
       end
 
       def init_suites
@@ -178,7 +178,7 @@ module AllureRubyApi
       end
 
       def validate_xml(xml)
-        xsd = Nokogiri::XML::Schema(File.read(Pathname.new(File.dirname(__FILE__)).join("../../allure-model-#{AllureRubyApi::Version::ALLURE}.xsd")))
+        xsd = Nokogiri::XML::Schema(File.read(Pathname.new(File.dirname(__FILE__)).join("../../allure-model-#{AllureRubyAdaptorApi::Version::ALLURE}.xsd")))
         doc = Nokogiri::XML(xml)
 
         xsd.validate(doc).each do |error|

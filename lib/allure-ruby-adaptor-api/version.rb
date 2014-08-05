@@ -1,4 +1,4 @@
-module AllureRubyApi # :nodoc:
+module AllureRubyAdaptorApi # :nodoc:
   module Version # :nodoc:
     STRING = '0.6.1'
     ALLURE = '1.4.0'

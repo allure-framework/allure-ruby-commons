@@ -1,8 +1,8 @@
 require 'spec_helper'
 require 'tempfile'
 
-describe AllureRubyApi do
-  let(:builder) { AllureRubyApi::Builder }
+describe AllureRubyAdaptorApi do
+  let(:builder) { AllureRubyAdaptorApi::Builder }
 
   it "should build xml report" do
 

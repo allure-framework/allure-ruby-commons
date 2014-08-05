@@ -1,7 +1,7 @@
-require 'allure-ruby-api/version'
-require 'allure-ruby-api/builder'
+require 'allure-ruby-adaptor-api/version'
+require 'allure-ruby-adaptor-api/builder'
 
-module AllureRubyApi
+module AllureRubyAdaptorApi
   module Config
     class << self
       attr_accessor :output_dir
