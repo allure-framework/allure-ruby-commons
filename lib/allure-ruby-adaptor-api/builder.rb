@@ -80,6 +80,7 @@ module AllureRubyAdaptorApi
         file_extname = File.extname(file.path.downcase)
         mime_type = opts[:mime_type] || MimeMagic.by_path(file.path) || "text/plain"
         attachment = dir.join("#{Digest::SHA256.file(file.path).hexdigest}-attachment#{(file_extname.empty?) ? '' : file_extname}")
+        puts "Copying attachment to '#{attachment}'..."
         FileUtils.cp(file.path, attachment)
         attach = {
             :type => mime_type,
@@ -153,6 +154,7 @@ module AllureRubyAdaptorApi
           dir = Pathname.new(config.output_dir)
           FileUtils.mkdir_p(dir)
           out_file = dir.join("#{UUID.new.generate}-testsuite.xml")
+          puts "Writing file '#{out_file}'..."
           File.open(out_file, 'w+') do |file|
             file.write(validate_xml(xml))
           end

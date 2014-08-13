@@ -26,7 +26,8 @@ module AllureRubyAdaptorApi
           :type => type,
           :title => title,
           :source => attachment.basename,
-          :size => File.stat(attachment).size
+          :size => File.stat(attachment).size,
+          :mime_type => mime_type
       }, step)
     end
   end
