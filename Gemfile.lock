@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    allure-ruby-adaptor-api (0.6.2)
+    allure-ruby-adaptor-api (0.6.3)
       mimemagic
       nokogiri (~> 1.6.0)
       uuid
@@ -26,6 +26,4 @@ PLATFORMS
 DEPENDENCIES
   allure-ruby-adaptor-api!
   bundler
-  mimemagic
-  nokogiri (~> 1.6.0)
   rake
