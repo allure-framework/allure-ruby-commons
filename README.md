@@ -14,7 +14,7 @@ Add the dependency to your Gemfile
 
 ## Advanced options
 
-You can specify the directory where the Allure test results will appear. By default it would be 'allure/data' within
+You can specify the directory where the Allure test results will appear. By default it would be 'gen/allure-results' within
 your current directory.
 
 ```ruby
