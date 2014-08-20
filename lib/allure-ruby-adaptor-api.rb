@@ -6,7 +6,7 @@ module AllureRubyAdaptorApi
     class << self
       attr_accessor :output_dir
 
-      DEFAULT_OUTPUT_DIR = 'allure/data'
+      DEFAULT_OUTPUT_DIR = 'gen/allure-results'
 
       def output_dir
         @output_dir || DEFAULT_OUTPUT_DIR
