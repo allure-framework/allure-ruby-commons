@@ -17,6 +17,9 @@ describe AllureRubyAdaptorApi do
     builder.stop_test "some_suite", "some_test", :status => :broken, :exception => Exception.new("some error")
     builder.stop_suite "some_suite"
 
+    builder.start_suite "some_empty_suite"
+    builder.stop_suite "some_empty_suite"
+
     builder.build! {|suite, xml|
       xml.should_not be_empty
       xml.should include("<ns2:test-suite")

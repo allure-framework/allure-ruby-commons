@@ -26,19 +26,20 @@ your current directory.
 ## Usage examples
 
 ```ruby
-    AllureRubyAdaptorApi::Builder.start_suite "some_suite", :severity => :normal
-    AllureRubyAdaptorApi::Builder.start_test "some_suite", "some_test", :feature => "Some feature", :severity => :critical
-    AllureRubyAdaptorApi::Builder.start_step "some_suite", "some_test", "first step"
-    AllureRubyAdaptorApi::Builder.add_attachment "some_suite", "some_test", :file => Tempfile.new("somefile")
-    AllureRubyAdaptorApi::Builder.stop_step "some_suite", "some_test", "first step"
-    AllureRubyAdaptorApi::Builder.start_step "some_suite", "some_test", "second step"
-    AllureRubyAdaptorApi::Builder.add_attachment "some_suite", "some_test", :step => "second step", :file => Tempfile.new("somefile")
-    AllureRubyAdaptorApi::Builder.stop_step "some_suite", "some_test", "second step"
-    AllureRubyAdaptorApi::Builder.start_step "some_suite", "some_test", "third step"
-    AllureRubyAdaptorApi::Builder.stop_step "some_suite", "some_test", "third step", :failed
-    AllureRubyAdaptorApi::Builder.stop_test "some_suite", "some_test", :status => :broken, :exception => Exception.new("some error")
-    AllureRubyAdaptorApi::Builder.stop_suite "some_suite"
+    builder = AllureRubyAdaptorApi::Builder
+    builder.start_suite "some_suite", :severity => :normal
+    builder.start_test "some_suite", "some_test", :feature => "Some feature", :severity => :critical
+    builder.start_step "some_suite", "some_test", "first step"
+    builder.add_attachment "some_suite", "some_test", :file => Tempfile.new("somefile")
+    builder.stop_step "some_suite", "some_test", "first step"
+    builder.start_step "some_suite", "some_test", "second step"
+    builder.add_attachment "some_suite", "some_test", :step => "second step", :file => Tempfile.new("somefile")
+    builder.stop_step "some_suite", "some_test", "second step"
+    builder.start_step "some_suite", "some_test", "third step"
+    builder.stop_step "some_suite", "some_test", "third step", :failed
+    builder.stop_test "some_suite", "some_test", :status => :broken, :exception => Exception.new("some error")
+    builder.stop_suite "some_suite"
 
     # This will generate the results within your output directory
-    AllureRubyAdaptorApi::Builder.build!
+    builder.build!
 ```

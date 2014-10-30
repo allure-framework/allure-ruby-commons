@@ -149,16 +149,18 @@ module AllureRubyAdaptorApi
               xml_labels(xml, suite[:labels])
             end
           end
-          xml = builder.to_xml
-          xml = yield suite, xml if block_given?
-          dir = Pathname.new(config.output_dir)
-          FileUtils.mkdir_p(dir)
-          out_file = dir.join("#{UUID.new.generate}-testsuite.xml")
-          puts "Writing file '#{out_file}'..."
-          File.open(out_file, 'w+') do |file|
-            file.write(validate_xml(xml))
+          unless suite[:tests].empty?
+            xml = builder.to_xml
+            xml = yield suite, xml if block_given?
+            dir = Pathname.new(config.output_dir)
+            FileUtils.mkdir_p(dir)
+            out_file = dir.join("#{UUID.new.generate}-testsuite.xml")
+            puts "Writing file '#{out_file}'..."
+            File.open(out_file, 'w+') do |file|
+              file.write(validate_xml(xml))
+            end
+            suites_xml << xml
           end
-          suites_xml << xml
         end
         suites_xml
       end
