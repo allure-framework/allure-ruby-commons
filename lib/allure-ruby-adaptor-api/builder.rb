@@ -115,54 +115,56 @@ module AllureRubyAdaptorApi
 
       def build!(opts = {}, &block)
         suites_xml = []
-        self.suites.each do |suite_title, suite|
-          builder = Nokogiri::XML::Builder.new do |xml|
-            xml.send "ns2:test-suite", :start => suite[:start] || 0, :stop => suite[:stop] || 0, 'xmlns' => '', "xmlns:ns2" => "urn:model.allure.qatools.yandex.ru" do
-              xml.send :name, suite_title
-              xml.send :title, suite_title
-              xml.send "test-cases" do
-                suite[:tests].each do |test_title, test|
-                  xml.send "test-case", :start => test[:start] || 0, :stop => test[:stop] || 0, :status => test[:status] do
-                    xml.send :name, test_title
-                    xml.send :title, test_title
-                    unless test[:failure].nil?
-                      xml.failure do
-                        xml.message test[:failure][:message]
-                        xml.send "stack-trace", test[:failure][:stacktrace]
-                      end
-                    end
-                    xml.steps do
-                      test[:steps].each do |step_title, step_obj|
-                        xml.step(:start => step_obj[:start] || 0, :stop => step_obj[:stop] || 0, :status => step_obj[:status]) do
-                          xml.send :name, step_title
-                          xml.send :title, step_title
-                          xml_attachments(xml, step_obj[:attachments])
+        if self.suites.nil? == false
+          self.suites.each do |suite_title, suite|
+            builder = Nokogiri::XML::Builder.new do |xml|
+              xml.send "ns2:test-suite", :start => suite[:start] || 0, :stop => suite[:stop] || 0, 'xmlns' => '', "xmlns:ns2" => "urn:model.allure.qatools.yandex.ru" do
+                xml.send :name, suite_title
+                xml.send :title, suite_title
+                xml.send "test-cases" do
+                  suite[:tests].each do |test_title, test|
+                    xml.send "test-case", :start => test[:start] || 0, :stop => test[:stop] || 0, :status => test[:status] do
+                      xml.send :name, test_title
+                      xml.send :title, test_title
+                      unless test[:failure].nil?
+                        xml.failure do
+                          xml.message test[:failure][:message]
+                          xml.send "stack-trace", test[:failure][:stacktrace]
                         end
                       end
+                      xml.steps do
+                        test[:steps].each do |step_title, step_obj|
+                          xml.step(:start => step_obj[:start] || 0, :stop => step_obj[:stop] || 0, :status => step_obj[:status]) do
+                            xml.send :name, step_title
+                            xml.send :title, step_title
+                            xml_attachments(xml, step_obj[:attachments])
+                          end
+                        end
+                      end
+                      xml_attachments(xml, test[:attachments])
+                      xml_labels(xml, suite[:labels].merge(test[:labels]))
+                      xml.parameters
                     end
-                    xml_attachments(xml, test[:attachments])
-                    xml_labels(xml, suite[:labels].merge(test[:labels]))
-                    xml.parameters
                   end
                 end
+                xml_labels(xml, suite[:labels])
               end
-              xml_labels(xml, suite[:labels])
+            end
+            unless suite[:tests].empty?
+              xml = builder.to_xml
+              xml = yield suite, xml if block_given?
+              dir = Pathname.new(config.output_dir)
+              FileUtils.mkdir_p(dir)
+              out_file = dir.join("#{UUID.new.generate}-testsuite.xml")
+              puts "Writing file '#{out_file}'..."
+              File.open(out_file, 'w+') do |file|
+                file.write(validate_xml(xml))
+              end
+              suites_xml << xml
             end
           end
-          unless suite[:tests].empty?
-            xml = builder.to_xml
-            xml = yield suite, xml if block_given?
-            dir = Pathname.new(config.output_dir)
-            FileUtils.mkdir_p(dir)
-            out_file = dir.join("#{UUID.new.generate}-testsuite.xml")
-            puts "Writing file '#{out_file}'..."
-            File.open(out_file, 'w+') do |file|
-              file.write(validate_xml(xml))
-            end
-            suites_xml << xml
-          end
-        end
         suites_xml
+        end
       end
 
       private
