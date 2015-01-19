@@ -115,7 +115,7 @@ module AllureRubyAdaptorApi
 
       def build!(opts = {}, &block)
         suites_xml = []
-        self.suites.each do |suite_title, suite|
+        (self.suites || []).each do |suite_title, suite|
           builder = Nokogiri::XML::Builder.new do |xml|
             xml.send "ns2:test-suite", :start => suite[:start] || 0, :stop => suite[:stop] || 0, 'xmlns' => '', "xmlns:ns2" => "urn:model.allure.qatools.yandex.ru" do
               xml.send :name, suite_title
