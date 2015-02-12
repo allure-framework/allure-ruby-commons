@@ -2,6 +2,7 @@ require 'digest'
 require 'mimemagic'
 require 'nokogiri'
 require 'uuid'
+require 'socket'
 
 module AllureRubyAdaptorApi
 
@@ -9,6 +10,7 @@ module AllureRubyAdaptorApi
     class << self
       attr_accessor :suites
       MUTEX = Mutex.new
+      HOSTNAME = Socket.gethostname
 
       def start_suite(suite, labels = {:severity => :normal})
         init_suites
@@ -18,7 +20,7 @@ module AllureRubyAdaptorApi
               :title => suite,
               :start => timestamp,
               :tests => {},
-              :labels => labels
+              :labels => add_default_labels(labels)
           }
         end
       end
@@ -32,7 +34,7 @@ module AllureRubyAdaptorApi
               :failure => nil,
               :steps => {},
               :attachments => [],
-              :labels => labels,
+              :labels => add_default_labels(labels),
           }
         end
       end
@@ -166,6 +168,12 @@ module AllureRubyAdaptorApi
       end
 
       private
+
+      def add_default_labels(labels = {})
+        labels[:thread] ||= Thread.current.object_id
+        labels[:host] ||= HOSTNAME
+        labels
+      end
 
       def config
         AllureRubyAdaptorApi::Config
