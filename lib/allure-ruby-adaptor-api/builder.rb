@@ -12,7 +12,7 @@ module AllureRubyAdaptorApi
       attr_accessor :suites
       MUTEX = Mutex.new
       HOSTNAME = Socket.gethostname
-      LOGGER = Logger.new(STDOUT)
+      LOGGER = Logger.new nil
 
       def start_suite(suite, labels = {:severity => :normal})
         init_suites
@@ -185,6 +185,9 @@ module AllureRubyAdaptorApi
         MUTEX.synchronize {
           self.suites ||= {}
         }
+        # init the log dev and log level
+        log_dev = Logger::LogDevice.new(config.logging_dev || STDOUT)
+        LOGGER.instance_variable_set(:@logdev, log_dev)
         LOGGER.level = config.logging_level
       end
 
@@ -197,6 +200,7 @@ module AllureRubyAdaptorApi
         doc = Nokogiri::XML(xml)
 
         xsd.validate(doc).each do |error|
+          LOGGER.error error.message
           $stderr.puts error.message
         end
         xml

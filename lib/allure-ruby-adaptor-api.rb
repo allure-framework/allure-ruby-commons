@@ -5,7 +5,7 @@ require 'logger'
 module AllureRubyAdaptorApi
   module Config
     class << self
-      attr_accessor :output_dir, :logging_level
+      attr_accessor :output_dir, :logging_level, :logging_dev
 
       DEFAULT_OUTPUT_DIR = 'gen/allure-results'
       DEFAULT_LOGGING_LEVEL = Logger::DEBUG
@@ -16,6 +16,10 @@ module AllureRubyAdaptorApi
 
       def logging_level
         @logging_level || DEFAULT_LOGGING_LEVEL
+      end
+
+      def logging_dev
+        @logging_dev || STDOUT
       end
     end
   end
