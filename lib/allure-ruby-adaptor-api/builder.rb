@@ -77,7 +77,7 @@ module AllureRubyAdaptorApi
         raise "File cannot be nil!" if opts[:file].nil?
         step = opts[:step]
         file = opts[:file]
-        title = opts[:title] || File.basename file
+        title = opts[:title] || File.basename(file)
         LOGGER.debug  "Adding attachment #{opts[:title]} to #{suite}.#{test}#{step.nil? ? "" : ".#{step}"}"
         dir = Pathname.new(Dir.pwd).join(config.output_dir)
         FileUtils.mkdir_p(dir)
