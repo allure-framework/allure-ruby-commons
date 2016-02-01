@@ -8,7 +8,7 @@ module AllureRubyAdaptorApi
       attr_accessor :output_dir, :logging_level
 
       DEFAULT_OUTPUT_DIR = 'gen/allure-results'
-      DEFAULT_LOGGING_LEVEL = Logger::DEBUG
+      DEFAULT_LOGGING_LEVEL = Logger::INFO
 
       def output_dir
         @output_dir || DEFAULT_OUTPUT_DIR
