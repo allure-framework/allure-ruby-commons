@@ -23,6 +23,7 @@ module AllureRubyAdaptorApi
               :start => timestamp,
               :tests => {},
               :labels => add_default_labels(labels)
+              :attachments => []
           }
         end
       end
@@ -95,7 +96,11 @@ module AllureRubyAdaptorApi
             :size => File.stat(attachment).size
         }
         if step.nil?
-          self.suites[suite][:tests][test][:attachments] << attach
+          unless self.suites[suite][:tests][test].nil?
+            self.suites[suite][:tests][test][:attachments] << attach
+          else
+            self.suites[suite][:attachments] << attach
+          end
         else
           self.suites[suite][:tests][test][:steps][step][:attachments] << attach
         end
