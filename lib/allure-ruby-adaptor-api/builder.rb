@@ -83,7 +83,7 @@ module AllureRubyAdaptorApi
         FileUtils.mkdir_p(dir)
         file_extname = File.extname(file.path.downcase)
         mime_type = opts[:mime_type] || MimeMagic.by_path(file.path) || "text/plain"
-        attachment = dir.join("#{Digest::SHA256.file(file.path).hexdigest}-attachment#{(file_extname.empty?) ? '' : file_extname}")
+        attachment = dir.join("#{UUID.new.generate}-attachment#{(file_extname.empty?) ? '' : file_extname}")
         LOGGER.debug "Copying attachment to '#{attachment}'..."
         FileUtils.cp(file.path, attachment)
         attach = {
