@@ -17,13 +17,17 @@ module AllureRubyAdaptorApi
       def start_suite(suite, labels = {:severity => :normal})
         init_suites
         MUTEX.synchronize do
-          LOGGER.debug "Starting case_or_suite #{suite} with labels #{labels}"
-          self.suites[suite] = {
-              :title => suite,
-              :start => timestamp,
-              :tests => {},
-              :labels => add_default_labels(labels)
-          }
+          if self.suites[suite]
+            LOGGER.debug "Resuming case_or_suite #{suite} with labels #{labels}"
+          else 
+            LOGGER.debug "Starting case_or_suite #{suite} with labels #{labels}"
+		    self.suites[suite] = {
+                :title => suite,
+                :start => timestamp,
+                :tests => {},
+                :labels => add_default_labels(labels)
+            }
+          end
         end
       end
 
