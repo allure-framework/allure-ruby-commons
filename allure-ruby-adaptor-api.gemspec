@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.description   = %q{This is a helper library containing the basics for any ruby-based Allure adaptor.}
   s.summary       = "allure-ruby-adaptor-api-#{AllureRubyAdaptorApi::Version::STRING}"
   s.homepage      = 'http://allure.qatools.ru'
-  s.license       = 'Apache2'
+  s.license       = 'Apache-2.0'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {spec,features}/*`.split("\n")
