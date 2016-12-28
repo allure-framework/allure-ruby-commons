@@ -11,14 +11,14 @@ Gem::Specification.new do |s|
   s.description   = %q{This is a helper library containing the basics for any ruby-based Allure adaptor.}
   s.summary       = "allure-ruby-adaptor-api-#{AllureRubyAdaptorApi::Version::STRING}"
   s.homepage      = 'http://allure.qatools.ru'
-  s.license       = 'Apache2'
+  s.license       = 'Apache-2.0'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ['lib']
 
-  s.add_dependency 'nokogiri', '~> 1.6.0'
+  s.add_dependency 'nokogiri', '~> 1.7'
   s.add_dependency 'uuid'
   s.add_dependency 'mimemagic'
 
