@@ -62,11 +62,11 @@ module AllureRubyAdaptorApi
         end
       end
 
-      def start_step(suite, test, step)
+      def start_step(suite, test, step, title = step)
         MUTEX.synchronize do
           LOGGER.debug "Starting step #{suite}.#{test}.#{step}"
           self.suites[suite][:tests][test][:steps][step] = {
-              :title => step,
+              :title => title,
               :start => timestamp,
               :attachments => []
           }
