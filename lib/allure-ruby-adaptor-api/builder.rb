@@ -138,8 +138,8 @@ module AllureRubyAdaptorApi
                     xml.steps do
                       test[:steps].each do |step_title, step_obj|
                         xml.step(:start => step_obj[:start] || 0, :stop => step_obj[:stop] || 0, :status => step_obj[:status]) do
-                          xml.send :name, step_title
-                          xml.send :title, step_title
+                          xml.send :name, step_title.split("|")[0].strip # remove line numbers used for indexing in allure-cucumber
+                          xml.send :title, step_title.split("|")[0].strip # remove line numbers used for indexing in allure-cucumber
                           xml_attachments(xml, step_obj[:attachments])
                         end
                       end
