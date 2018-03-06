@@ -62,7 +62,8 @@ module AllureRubyAdaptorApi
         end
       end
 
-      def start_step(suite, test, step, step_id)
+      def start_step(suite, test, step, step_id = '')
+        step_id = step if step_id == ''
         MUTEX.synchronize do
           LOGGER.debug "Starting step #{suite}.#{test}.#{step}.#{step_id}"
           self.suites[suite][:tests][test][:steps][step_id] = {
@@ -101,7 +102,8 @@ module AllureRubyAdaptorApi
         end
       end
 
-      def stop_step(suite, test, step, step_id, status = :passed)
+      def stop_step(suite, test, step, step_id = '', status = :passed)
+        step_id = step if step_id == ''
         MUTEX.synchronize do
           LOGGER.debug "Stopping step #{suite}.#{test}.#{step}.#{step_id}"
           self.suites[suite][:tests][test][:steps][step_id][:stop] = timestamp
