@@ -62,10 +62,10 @@ module AllureRubyAdaptorApi
         end
       end
 
-      def start_step(suite, test, step, step_line)
+      def start_step(suite, test, step, step_id)
         MUTEX.synchronize do
-          LOGGER.debug "Starting step #{suite}.#{test}.#{step}.#{step_line}"
-          self.suites[suite][:tests][test][:steps][step_line] = {
+          LOGGER.debug "Starting step #{suite}.#{test}.#{step}.#{step_id}"
+          self.suites[suite][:tests][test][:steps][step_id] = {
               :title => step,
               :start => timestamp,
               :attachments => []
@@ -101,12 +101,12 @@ module AllureRubyAdaptorApi
         end
       end
 
-      def stop_step(suite, test, step, step_line, status = :passed)
+      def stop_step(suite, test, step, step_id, status = :passed)
         MUTEX.synchronize do
-          LOGGER.debug "Stopping step #{suite}.#{test}.#{step}.#{step_line}"
-          self.suites[suite][:tests][test][:steps][step_line][:stop] = timestamp
-          self.suites[suite][:tests][test][:steps][step_line][:status] = status
-          self.suites[suite][:tests][test][:steps][step_line][:name] = name
+          LOGGER.debug "Stopping step #{suite}.#{test}.#{step}.#{step_id}"
+          self.suites[suite][:tests][test][:steps][step_id][:stop] = timestamp
+          self.suites[suite][:tests][test][:steps][step_id][:status] = status
+          self.suites[suite][:tests][test][:steps][step_id][:name] = name
         end
       end
 
@@ -137,10 +137,10 @@ module AllureRubyAdaptorApi
                       end
                     end
                     xml.steps do
-                      test[:steps].each do |step_line, step_obj|
+                      test[:steps].each do |step_id, step_obj|
                         xml.step(:start => step_obj[:start] || 0, :stop => step_obj[:stop] || 0, :status => step_obj[:status]) do
-                          xml.send :name, test[:steps][step_line][:title]
-                          xml.send :title, test[:steps][step_line][:title]
+                          xml.send :name, test[:steps][step_id][:title]
+                          xml.send :title, test[:steps][step_id][:title]
                           xml_attachments(xml, step_obj[:attachments])
                         end
                       end
