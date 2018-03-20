@@ -62,8 +62,7 @@ module AllureRubyAdaptorApi
         end
       end
 
-      def start_step(suite, test, step, step_id = '')
-        step_id = step if step_id == ''
+      def start_step(suite, test, step, step_id = step)
         MUTEX.synchronize do
           LOGGER.debug "Starting step #{suite}.#{test}.#{step}.#{step_id}"
           self.suites[suite][:tests][test][:steps][step_id] = {
