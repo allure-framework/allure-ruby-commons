@@ -73,12 +73,12 @@ module AllureRubyAdaptorApi
         end
       end
 
-      def add_attachment(suite, test, opts = {:step => nil, :file => nil, :mime_type => nil})
+      def add_attachment(suite, test, opts = {:step_id => nil, :file => nil, :mime_type => nil})
         raise "File cannot be nil!" if opts[:file].nil?
-        step = opts[:step]
+        step_id = opts[:step_id]
         file = opts[:file]
         title = opts[:title] || File.basename(file)
-        LOGGER.debug  "Adding attachment #{opts[:title]} to #{suite}.#{test}#{step.nil? ? "" : ".#{step}"}"
+        LOGGER.debug  "Adding attachment #{opts[:title]} to #{suite}.#{test}#{step_id.nil? ? "" : ".#{step_id}"}"
         dir = Pathname.new(Dir.pwd).join(config.output_dir)
         FileUtils.mkdir_p(dir)
         file_extname = File.extname(file.path.downcase)
@@ -94,10 +94,10 @@ module AllureRubyAdaptorApi
             :target => attachment.basename,
             :size => File.stat(attachment).size
         }
-        if step.nil?
+        if step_id.nil?
           self.suites[suite][:tests][test][:attachments] << attach
         else
-          self.suites[suite][:tests][test][:steps][step][:attachments] << attach
+          self.suites[suite][:tests][test][:steps][step_id][:attachments] << attach
         end
       end
 

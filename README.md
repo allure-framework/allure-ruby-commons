@@ -33,7 +33,7 @@ your current directory.
     builder.add_attachment "some_suite", "some_test", :file => Tempfile.new("somefile")
     builder.stop_step "some_suite", "some_test", "first step"
     builder.start_step "some_suite", "some_test", "second step"
-    builder.add_attachment "some_suite", "some_test", :step => "second step", :file => Tempfile.new("somefile")
+    builder.add_attachment "some_suite", "some_test", :step_id => "second step", :file => Tempfile.new("somefile")
     builder.stop_step "some_suite", "some_test", "second step"
     builder.start_step "some_suite", "some_test", "third step"
     builder.stop_step "some_suite", "some_test", "third step", :failed
