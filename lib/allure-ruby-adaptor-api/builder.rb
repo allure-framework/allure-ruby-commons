@@ -9,7 +9,7 @@ module AllureRubyAdaptorApi
 
   class Builder
     class << self
-      attr_accessor :suites
+      attr_accessor :suites, :test
       MUTEX = Mutex.new
       HOSTNAME = Socket.gethostname
       LOGGER = Logger.new(STDOUT)
@@ -22,15 +22,18 @@ module AllureRubyAdaptorApi
               :title => suite,
               :start => timestamp,
               :tests => {},
-              :labels => add_default_labels(labels)
+              :labels => add_default_labels(labels),
+              :test_case_counter => 0,
           }
         end
       end
 
       def start_test(suite, test, labels = {:severity => :normal})
         MUTEX.synchronize do
+          self.test = "test_case_#{self.suites[suite][:test_case_counter].to_s}"
           LOGGER.debug "Starting test #{suite}.#{test} with labels #{labels}"
-          self.suites[suite][:tests][test] = {
+
+          self.suites[suite][:tests][self.test] = {
               :title => test,
               :start => timestamp,
               :failure => nil,
@@ -38,22 +41,23 @@ module AllureRubyAdaptorApi
               :attachments => [],
               :labels => add_default_labels(labels),
           }
+          self.suites[suite][:test_case_counter] +=1
         end
       end
 
       def stop_test(suite, test, result = {})
-        self.suites[suite][:tests][test][:steps].each do |step_title, step|
+        self.suites[suite][:tests][self.test][:steps].each do |step_title, step|
           if step[:stop].nil? || step[:stop] == 0
             stop_step(suite, test, step_title, result[:status])
           end
         end
         MUTEX.synchronize do
           LOGGER.debug "Stopping test #{suite}.#{test}"
-          self.suites[suite][:tests][test][:stop] = timestamp(result[:finished_at])
-          self.suites[suite][:tests][test][:start] = timestamp(result[:started_at]) if result[:started_at]
-          self.suites[suite][:tests][test][:status] = result[:status]
-          if (result[:status].to_sym != :passed)
-            self.suites[suite][:tests][test][:failure] = {
+          self.suites[suite][:tests][self.test][:stop] = timestamp(result[:finished_at])
+          self.suites[suite][:tests][self.test][:start] = timestamp(result[:started_at]) if result[:started_at]
+          self.suites[suite][:tests][self.test][:status] = result[:status]
+          if result[:status].to_sym != :passed
+            self.suites[suite][:tests][self.test][:failure] = {
                 :stacktrace => ((result[:exception] && result[:exception].backtrace) || []).map { |s| s.to_s }.join("\r\n"),
                 :message => result[:exception].to_s,
             }
@@ -65,7 +69,7 @@ module AllureRubyAdaptorApi
       def start_step(suite, test, step, step_id = step)
         MUTEX.synchronize do
           LOGGER.debug "Starting step #{suite}.#{test}.#{step}.#{step_id}"
-          self.suites[suite][:tests][test][:steps][step_id] = {
+          self.suites[suite][:tests][self.test][:steps][step_id] = {
               :title => step,
               :start => timestamp,
               :attachments => []
@@ -95,9 +99,9 @@ module AllureRubyAdaptorApi
             :size => File.stat(attachment).size
         }
         if step_id.nil?
-          self.suites[suite][:tests][test][:attachments] << attach
+          self.suites[suite][:tests][self.test][:attachments] << attach
         else
-          self.suites[suite][:tests][test][:steps][step_id][:attachments] << attach
+          self.suites[suite][:tests][self.test][:steps][step_id][:attachments] << attach
         end
       end
 
@@ -105,9 +109,9 @@ module AllureRubyAdaptorApi
         step_id = step if step_id == ''
         MUTEX.synchronize do
           LOGGER.debug "Stopping step #{suite}.#{test}.#{step}.#{step_id}"
-          self.suites[suite][:tests][test][:steps][step_id][:stop] = timestamp
-          self.suites[suite][:tests][test][:steps][step_id][:status] = status
-          self.suites[suite][:tests][test][:steps][step_id][:name] = name
+          self.suites[suite][:tests][self.test][:steps][step_id][:stop] = timestamp
+          self.suites[suite][:tests][self.test][:steps][step_id][:status] = status
+          self.suites[suite][:tests][self.test][:steps][step_id][:name] = name
         end
       end
 
@@ -127,10 +131,10 @@ module AllureRubyAdaptorApi
               xml.send :name, suite_title
               xml.send :title, suite_title
               xml.send "test-cases" do
-                suite[:tests].each do |test_title, test|
+                suite[:tests].each do |_, test|
                   xml.send "test-case", :start => test[:start] || 0, :stop => test[:stop] || 0, :status => test[:status] do
-                    xml.send :name, test_title
-                    xml.send :title, test_title
+                    xml.send :name, test[:title]
+                    xml.send :title, test[:title]
                     unless test[:failure].nil?
                       xml.failure do
                         xml.message test[:failure][:message]
