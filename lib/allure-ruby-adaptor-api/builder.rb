@@ -28,13 +28,14 @@ module AllureRubyAdaptorApi
         end
       end
 
-      def start_test(suite, test, labels = {:severity => :normal})
+      def start_test(suite, test, labels = {:severity => :normal}, description = nil)
         MUTEX.synchronize do
           self.test = "test_case_#{self.suites[suite][:test_case_counter].to_s}"
           LOGGER.debug "Starting test #{suite}.#{test} with labels #{labels}"
 
           self.suites[suite][:tests][self.test] = {
               :title => test,
+              :description => description,
               :start => timestamp,
               :failure => nil,
               :steps => {},
@@ -135,6 +136,7 @@ module AllureRubyAdaptorApi
                   xml.send "test-case", :start => test[:start] || 0, :stop => test[:stop] || 0, :status => test[:status] do
                     xml.send :name, test[:title]
                     xml.send :title, test[:title]
+                    xml.send :description, test[:description]
                     unless test[:failure].nil?
                       xml.failure do
                         xml.message test[:failure][:message]
