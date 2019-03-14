@@ -1,168 +1,149 @@
-require 'digest'
-require 'logger'
-require 'mimemagic'
-require 'nokogiri'
-require 'uuid'
-require 'socket'
+# frozen_string_literal: true
+
+require "digest"
+require "logger"
+require "mimemagic"
+require "nokogiri"
+require "uuid"
+require "pathname"
 
 module AllureRubyAdaptorApi
 
   class Builder
     class << self
-      attr_accessor :suites
+      THREAD = Thread.current
       MUTEX = Mutex.new
-      HOSTNAME = Socket.gethostname
       LOGGER = Logger.new(STDOUT)
 
-      def start_suite(suite, labels = {:severity => :normal})
+      # Start test suite
+      # @param [String] title
+      # @return [void]
+      def start_suite(title, labels = {})
         init_suites
-        MUTEX.synchronize do
-          LOGGER.debug "Starting case_or_suite #{suite} with labels #{labels}"
-          self.suites[suite] = {
-              :title => suite,
-              :start => timestamp,
-              :tests => {},
-              :labels => add_default_labels(labels)
-          }
-        end
+        LOGGER.debug "Starting suite #{title}"
+        THREAD[:suites].push(Suite.new(title, labels))
       end
 
-      def start_test(suite, test, labels = {:severity => :normal})
-        MUTEX.synchronize do
-          LOGGER.debug "Starting test #{suite}.#{test} with labels #{labels}"
-          self.suites[suite][:tests][test] = {
-              :title => test,
-              :start => timestamp,
-              :failure => nil,
-              :steps => {},
-              :attachments => [],
-              :labels => add_default_labels(labels),
-          }
-        end
+      # Start test case
+      # @param [String] title
+      # @param [Hash] labels
+      # @return [void]
+      def start_test(title, labels = {})
+        LOGGER.debug "Starting test #{current_suite.title}.#{title}"
+        current_suite.add_test(Test.new(title, labels))
       end
 
-      def stop_test(suite, test, result = {})
-        self.suites[suite][:tests][test][:steps].each do |step_title, step|
-          if step[:stop].nil? || step[:stop] == 0
-            stop_step(suite, test, step_title, result[:status])
-          end
-        end
-        MUTEX.synchronize do
-          LOGGER.debug "Stopping test #{suite}.#{test}"
-          self.suites[suite][:tests][test][:stop] = timestamp(result[:finished_at])
-          self.suites[suite][:tests][test][:start] = timestamp(result[:started_at]) if result[:started_at]
-          self.suites[suite][:tests][test][:status] = result[:status]
-          if (result[:status].to_sym != :passed)
-            self.suites[suite][:tests][test][:failure] = {
-                :stacktrace => ((result[:exception] && result[:exception].backtrace) || []).map { |s| s.to_s }.join("\r\n"),
-                :message => result[:exception].to_s,
-            }
-          end
-
-        end
+      # Stop test case
+      # @param [AllureRubyAdaptorApi::Result] result
+      # @return [void]
+      def stop_test(result)
+        LOGGER.debug "Stopping test #{current_suite.title}.#{current_test.title}"
+        current_test.start = Util.timestamp(result.started_at) if result.started_at
+        current_test.stop = Util.timestamp(result.finished_at)
+        current_test.result = result
       end
 
-      def start_step(suite, test, step, step_id = step)
-        MUTEX.synchronize do
-          LOGGER.debug "Starting step #{suite}.#{test}.#{step}.#{step_id}"
-          self.suites[suite][:tests][test][:steps][step_id] = {
-              :title => step,
-              :start => timestamp,
-              :attachments => []
-          }
-        end
+      # Start test step
+      # @param [AllureRubyAdaptorApi::Suite] suite
+      # @param [AllureRubyAdaptorApi::Test] test
+      # @param [AllureRubyAdaptorApi::Step] step
+      # @return [void]
+      def start_step(title)
+        LOGGER.debug "Starting step #{current_suite.title}.#{current_test.title}.#{title}"
+        current_test.add_step(Step.new(title))
       end
 
-      def add_attachment(suite, test, opts = {:step_id => nil, :file => nil, :mime_type => nil})
-        raise "File cannot be nil!" if opts[:file].nil?
-        step_id = opts[:step_id]
-        file = opts[:file]
-        title = opts[:title] || File.basename(file)
-        LOGGER.debug  "Adding attachment #{opts[:title]} to #{suite}.#{test}#{step_id.nil? ? "" : ".#{step_id}"}"
+      # @param [String] file
+      # @param [String] mime_type
+      # @param [String] title
+      # @return [void]
+      def add_attachment(file:, mime_type: nil, title: nil)
+        title ||= File.basename(file)
+        LOGGER.debug  "Adding attachment #{title} to #{current_suite.title}.#{current_test.title}#{current_step.title}"
         dir = Pathname.new(Dir.pwd).join(config.output_dir)
         FileUtils.mkdir_p(dir)
         file_extname = File.extname(file.path.downcase)
-        mime_type = opts[:mime_type] || MimeMagic.by_path(file.path) || "text/plain"
+        mime_type ||= MimeMagic.by_path(file.path) || "text/plain"
         attachment = dir.join("#{Digest::SHA256.file(file.path).hexdigest}-attachment#{(file_extname.empty?) ? '' : file_extname}")
         LOGGER.debug "Copying attachment to '#{attachment}'..."
         FileUtils.cp(file.path, attachment)
         attach = {
-            :type => mime_type,
-            :title => title,
-            :source => attachment.basename,
-            :file => attachment.basename,
-            :target => attachment.basename,
-            :size => File.stat(attachment).size
+            type: mime_type,
+            title: title,
+            source: attachment.basename,
+            file: attachment.basename,
+            target: attachment.basename,
+            size: File.stat(attachment).size
         }
-        if step_id.nil?
-          self.suites[suite][:tests][test][:attachments] << attach
+        if current_step.nil?
+          current_test.add_attachment(attach)
         else
-          self.suites[suite][:tests][test][:steps][step_id][:attachments] << attach
+          current_step.add_attachment(attach)
         end
       end
 
-      def stop_step(suite, test, step, step_id = '', status = :passed)
-        step_id = step if step_id == ''
+      # Stop test step
+      # @param [Symbol] status
+      # @return [void]
+      def stop_step(status = :passed)
         MUTEX.synchronize do
-          LOGGER.debug "Stopping step #{suite}.#{test}.#{step}.#{step_id}"
-          self.suites[suite][:tests][test][:steps][step_id][:stop] = timestamp
-          self.suites[suite][:tests][test][:steps][step_id][:status] = status
-          self.suites[suite][:tests][test][:steps][step_id][:name] = name
+          LOGGER.debug "Stopping step #{current_suite.title}.#{current_test.title}.#{current_step.title}"
+          current_step.stop = Util.timestamp
+          current_step.status = status
         end
       end
 
-      def stop_suite(title)
-        init_suites
-        MUTEX.synchronize do
-          LOGGER.debug "Stopping case_or_suite #{title}"
-          self.suites[title][:stop] = timestamp
-        end
+      # Stop test suite
+      # @return [void]
+      def stop_suite
+        LOGGER.debug "Stopping case_or_suite #{current_suite.title}"
+        current_suite.stop = Util.timestamp
       end
 
       def build!(opts = {}, &block)
         suites_xml = []
-        (self.suites || []).each do |suite_title, suite|
+        (THREAD[:suites] || []).each do |suite|
           builder = Nokogiri::XML::Builder.new do |xml|
-            xml.send "ns2:test-suite", :start => suite[:start] || 0, :stop => suite[:stop] || 0, 'xmlns' => '', "xmlns:ns2" => "urn:model.allure.qatools.yandex.ru" do
-              xml.send :name, suite_title
-              xml.send :title, suite_title
+            xml.send "ns2:test-suite", :start => suite.start || 0, :stop => suite.stop || 0, "xmlns" => "", "xmlns:ns2" => "urn:model.allure.qatools.yandex.ru" do
+              xml.send :name, suite.title
+              xml.send :title, suite.title
               xml.send "test-cases" do
-                suite[:tests].each do |test_title, test|
-                  xml.send "test-case", :start => test[:start] || 0, :stop => test[:stop] || 0, :status => test[:status] do
-                    xml.send :name, test_title
-                    xml.send :title, test_title
-                    unless test[:failure].nil?
+                suite.tests.each do |test|
+                  xml.send "test-case", start: test.start || 0, stop: test.stop || 0, status: test.result.status.to_s do
+                    xml.send :name, test.title
+                    xml.send :title, test.title
+                    unless test.result.ok?
                       xml.failure do
-                        xml.message test[:failure][:message]
-                        xml.send "stack-trace", test[:failure][:stacktrace]
+                        xml.message test.result.message
+                        xml.send "stack-trace", test.result.stacktrace
                       end
                     end
                     xml.steps do
-                      test[:steps].each do |step_id, step_obj|
-                        xml.step(:start => step_obj[:start] || 0, :stop => step_obj[:stop] || 0, :status => step_obj[:status]) do
-                          xml.send :name, test[:steps][step_id][:title]
-                          xml.send :title, test[:steps][step_id][:title]
-                          xml_attachments(xml, step_obj[:attachments])
+                      test.steps.each do |step|
+                        xml.step(start: step.start || 0, stop: step.stop || 0, status: step.status.to_s) do
+                          xml.send :name, step.title
+                          xml.send :title, step.title
+                          xml_attachments(xml, step.attachments)
                         end
                       end
                     end
-                    xml_attachments(xml, test[:attachments])
-                    xml_labels(xml, suite[:labels].merge(test[:labels]))
+                    xml_attachments(xml, test.attachments)
+                    xml_labels(xml, suite.labels.merge(test.labels))
                     xml.parameters
                   end
                 end
               end
-              xml_labels(xml, suite[:labels])
+              xml_labels(xml, suite.labels)
             end
           end
-          unless suite[:tests].empty?
+          unless suite.tests.empty?
             xml = builder.to_xml
             xml = yield suite, xml if block_given?
             dir = Pathname.new(config.output_dir)
             FileUtils.mkdir_p(dir)
             out_file = dir.join("#{UUID.new.generate}-testsuite.xml")
             LOGGER.debug "Writing file '#{out_file}'..."
-            File.open(out_file, 'w+') do |file|
+            File.open(out_file, "w+") do |file|
               file.write(validate_xml(xml))
             end
             suites_xml << xml
@@ -173,10 +154,19 @@ module AllureRubyAdaptorApi
 
       private
 
-      def add_default_labels(labels = {})
-        labels[:thread] ||= Thread.current.object_id
-        labels[:host] ||= HOSTNAME
-        labels
+      # @return [AllureRubyAdaptorApi::Suite]
+      def current_suite
+        THREAD[:suites].last
+      end
+
+      # @return [AllureRubyAdaptorApi::Test]
+      def current_test
+        current_suite.tests.last
+      end
+
+      # @return [AllureRubyAdaptorApi::Step] <description>
+      def current_step
+        current_test.steps.last
       end
 
       def config
@@ -184,14 +174,8 @@ module AllureRubyAdaptorApi
       end
 
       def init_suites
-        MUTEX.synchronize {
-          self.suites ||= {}
-        }
+        THREAD[:suites] ||= []
         LOGGER.level = config.logging_level
-      end
-
-      def timestamp(time = nil)
-        ((time || Time.now).to_f * 1000).to_i
       end
 
       def validate_xml(xml)
@@ -204,11 +188,10 @@ module AllureRubyAdaptorApi
         xml
       end
 
-
       def xml_attachments(xml, attachments)
         xml.attachments do
           attachments.each do |attach|
-            xml.attachment :source => attach[:source], :title => attach[:title], :size => attach[:size], :type => attach[:type]
+            xml.attachment source: attach[:source], title: attach[:title], size: attach[:size], type: attach[:type]
           end
         end
       end
@@ -218,10 +201,10 @@ module AllureRubyAdaptorApi
           labels.each do |name, value|
             if value.is_a?(Array)
               value.each do |v|
-                xml.label :name => name, :value => v
+                xml.label name: name, value: v
               end
             else
-              xml.label :name => name, :value => value
+              xml.label name: name, value: value
             end
           end
         end

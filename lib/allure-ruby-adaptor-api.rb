@@ -1,14 +1,17 @@
-require 'allure-ruby-adaptor-api/version'
-require 'allure-ruby-adaptor-api/builder'
-require 'logger'
+# frozen_string_literal: true
+
+require "require_all"
+require "logger"
+
+require_rel "allure-ruby-adaptor-api/**/*rb"
 
 module AllureRubyAdaptorApi
   module Config
     class << self
-      attr_accessor :output_dir, :logging_level
-
-      DEFAULT_OUTPUT_DIR = 'gen/allure-results'
+      DEFAULT_OUTPUT_DIR = "gen/allure-results"
       DEFAULT_LOGGING_LEVEL = Logger::INFO
+
+      attr_writer :output_dir, :logging_level
 
       def output_dir
         @output_dir || DEFAULT_OUTPUT_DIR

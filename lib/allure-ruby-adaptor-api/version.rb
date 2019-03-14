@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 module AllureRubyAdaptorApi # :nodoc:
   module Version # :nodoc:
-    STRING = '0.7.2'
-    ALLURE = '1.4.6'
+    STRING = "0.8.0"
+    ALLURE = "1.4.6"
   end
 end

@@ -1,29 +1,30 @@
-require 'spec_helper'
-require 'tempfile'
+# frozen_string_literal: true
+
+require_relative "spec_helper"
+require "tempfile"
 
 describe AllureRubyAdaptorApi do
   let(:builder) { AllureRubyAdaptorApi::Builder }
 
   it "should build xml report" do
+    builder.start_suite "some_suite"
+    builder.start_test "some_test"
+    builder.start_step "some step 1"
+    builder.stop_step
+    builder.start_step "some step 2"
+    builder.stop_step
+    builder.start_step "some step 3"
+    builder.stop_step :failed
+    builder.stop_test AllureRubyAdaptorApi::Result.new(:broken, Exception.new("some error"))
+    builder.stop_suite
 
-    builder.start_suite "some_suite", :severity => :normal
-    builder.start_test "some_suite", "some_test", :feature => "Some feature"
-    builder.start_step "some_suite", "some_test", "first step"
-    builder.stop_step "some_suite", "some_test", "first step"
-    builder.start_step "some_suite", "some_test", "second step"
-    builder.stop_step "some_suite", "some_test", "second step"
-    builder.start_step "some_suite", "some_test", "third step"
-    builder.stop_step "some_suite", "some_test", "third step", :failed
-    builder.stop_test "some_suite", "some_test", :status => :broken, :exception => Exception.new("some error")
-    builder.stop_suite "some_suite"
+    builder.start_suite "some empty suite"
+    builder.stop_suite
 
-    builder.start_suite "some_empty_suite"
-    builder.stop_suite "some_empty_suite"
-
-    builder.build! {|suite, xml|
-      xml.should_not be_empty
-      xml.should include("<ns2:test-suite")
-      xml.should include("<title>some_suite</title>")
+    builder.build! { |suite, xml|
+      expect(xml).to_not be_empty
+      expect(xml).to include("<ns2:test-suite")
+      expect(xml).to include("<title>some_suite</title>")
       xml
     }
   end

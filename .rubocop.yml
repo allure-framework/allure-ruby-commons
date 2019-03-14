@@ -1,0 +1,6 @@
+inherit_gem:
+  rubocop-github:
+    - config/default.yml
+
+AllCops:
+  TargetRubyVersion: 2.5
