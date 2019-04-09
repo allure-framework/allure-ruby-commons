@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'pry'
+require "pry"
 require "rspec"
 require "allure-ruby-adaptor-api"
 

@@ -3,7 +3,7 @@
 require "require_all"
 require "logger"
 
-require_rel "allure-ruby-adaptor-api/**/*rb"
+require_rel("allure-ruby-adaptor-api/**/*rb")
 
 module AllureRubyAdaptorApi
   module Config
@@ -24,9 +24,8 @@ module AllureRubyAdaptorApi
   end
 
   class << self
-    def configure(&block)
-      yield Config
+    def configure
+      yield(Config)
     end
   end
-
 end
