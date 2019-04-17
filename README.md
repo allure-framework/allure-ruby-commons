@@ -18,7 +18,7 @@ You can specify the directory where the Allure test results will appear. By defa
 your current directory.
 
 ```ruby
-    AllureRubyAdaptorApi.configure do |c|
+    Allure.configure do |c|
       c.output_dir = "/whatever/you/like"
     end
 ```
@@ -26,7 +26,7 @@ your current directory.
 ## Usage examples
 
 ```ruby
-    builder = AllureRubyAdaptorApi::Builder
+    builder = Allure::Builder
     builder.start_suite "some_suite", :severity => :normal
     builder.start_test "some_suite", "some_test", :feature => "Some feature", :severity => :critical
     builder.start_step "some_suite", "some_test", "first step"

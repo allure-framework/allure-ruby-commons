@@ -5,8 +5,8 @@ require "logger"
 
 require_rel("allure-ruby-adaptor-api/**/*rb")
 
-module AllureRubyAdaptorApi
-  module Config
+module Allure
+  class Config
     class << self
       DEFAULT_OUTPUT_DIR = "gen/allure-results"
       DEFAULT_LOGGING_LEVEL = Logger::INFO

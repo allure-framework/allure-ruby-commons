@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module AllureRubyAdaptorApi
-  class TestStatus
+module Allure
+  class Status
     FAILED = :failed
     BROKEN = :broken
     PASSED = :passed

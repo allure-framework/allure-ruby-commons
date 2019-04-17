@@ -5,12 +5,12 @@ require "allure-ruby-adaptor-api/version"
 
 Gem::Specification.new do |s|
   s.name = "allure-ruby-adaptor-api"
-  s.version = AllureRubyAdaptorApi::Version::STRING
+  s.version = Allure::Version::STRING
   s.platform = Gem::Platform::RUBY
   s.authors = ["Ilya Sadykov", "Andrejs Cunskis"]
   s.email = ["smecsia@yandex-team.ru", "andrejs.cunskis@gmail.com"]
   s.description = %(This is a helper library containing the basics for any ruby-based Allure adaptor.)
-  s.summary = "allure-ruby-adaptor-api_#{AllureRubyAdaptorApi::Version::STRING}"
+  s.summary = "allure-ruby-adaptor-api_#{Allure::Version::STRING}"
   s.homepage = "http://allure.qatools.ru"
   s.license = "Apache-2.0"
 
@@ -29,4 +29,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rubocop", "~> 0.67"
   s.add_development_dependency "rubocop-performance", "~> 1.1"
   s.add_development_dependency "pry"
+  s.add_development_dependency "solargraph"
 end

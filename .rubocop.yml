@@ -1103,6 +1103,7 @@ Style/MethodCallWithArgsParentheses:
     - add_development_dependency
     - gem
     - require
+    - require_relative
     - source
     - task
     - raise
@@ -1110,6 +1111,8 @@ Style/MethodCallWithArgsParentheses:
     - debug
     - info
     - warn
+    - expect
+    - to
   AllowParenthesesInMultilineCall: false
   AllowParenthesesInChaining: false
   EnforcedStyle: require_parentheses

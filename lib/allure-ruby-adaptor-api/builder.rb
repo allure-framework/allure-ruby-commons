@@ -7,20 +7,20 @@ require "nokogiri"
 require "uuid"
 require "pathname"
 
-module AllureRubyAdaptorApi
+module Allure
   class Builder
     class << self
-      # @return [AllureRubyAdaptorApi::Suite]
+      # @return [Allure::Suite]
       def current_suite
         thread[:suites].last
       end
 
-      # @return [AllureRubyAdaptorApi::Test]
+      # @return [Allure::Test]
       def current_test
         current_suite.tests.last
       end
 
-      # @return [AllureRubyAdaptorApi::Step]
+      # @return [Allure::Step]
       def current_step
         current_test.steps.last
       end
@@ -44,7 +44,7 @@ module AllureRubyAdaptorApi
       end
 
       # Stop test case
-      # @param [AllureRubyAdaptorApi::Result] result
+      # @param [Allure::Result] result
       # @return [void]
       def stop_test(result)
         logger.debug "Stopping test '#{current_suite.title}':'#{current_test.title}'"
@@ -54,9 +54,9 @@ module AllureRubyAdaptorApi
       end
 
       # Start test step
-      # @param [AllureRubyAdaptorApi::Suite] suite
-      # @param [AllureRubyAdaptorApi::Test] test
-      # @param [AllureRubyAdaptorApi::Step] step
+      # @param [Allure::Suite] suite
+      # @param [Allure::Test] test
+      # @param [Allure::Step] step
       # @return [void]
       def start_step(title)
         logger.debug "Starting step '#{current_suite.title}':'#{current_test.title}':'#{title}'"
@@ -104,7 +104,7 @@ module AllureRubyAdaptorApi
       end
 
       def config
-        AllureRubyAdaptorApi::Config
+        Allure::Config
       end
 
       def output_dir
