@@ -80,7 +80,51 @@ module Allure
 
       @current_test_step.stop = Util.timestamp
       @current_test_step.stage = Stage::FINISHED
-      clear_test_step
+      clear_current_test_step
+    end
+
+    # Start prepare fixture
+    # @param [Allure::FixtureResult] fixture_result
+    # @return [Allure::FixtureResult]
+    def start_prepare_fixture(fixture_result)
+      start_fixture(fixture_result)
+      @current_test_result_container.befores.push(fixture_result)
+      @current_fixture = fixture_result
+    end
+
+    # Start tear down fixture
+    # @param [Allure::FixtureResult] fixture_result
+    # @return [Allure::FixtureResult]
+    def start_tear_down_fixture(fixture_result)
+      start_fixture(fixture_result)
+      @current_test_result_container.afters.push(fixture_result)
+      @current_fixture = fixture_result
+    end
+
+    # Start fixture
+    # @param [Allure::FixtureResult] fixture_result
+    # @return [Allure::FixtureResult]
+    def start_fixture(fixture_result)
+      unless @current_test_result_container
+        raise Exception.new("Could not start fixture, test container is not started")
+      end
+
+      fixture_result.start = Util.timestamp
+      fixture_result.stage = Stage::RUNNING
+    end
+
+    def update_fixture
+      raise Exception.new("Could not update fixture, fixture is not started") unless @current_fixture
+
+      yield(@current_fixture)
+    end
+
+    def stop_fixture
+      raise Exception.new("Could not stop fixture, fixture is not started") unless @current_fixture
+
+      @current_fixture.stop = Util.timestamp
+      @current_fixture.stage = Stage::FINISHED
+      clear_current_fixture
     end
 
     private
@@ -97,8 +141,12 @@ module Allure
       @current_test_case = nil
     end
 
-    def clear_test_step
+    def clear_current_test_step
       @current_test_step = nil
+    end
+
+    def clear_current_fixture
+      @current_fixture = nil
     end
   end
 end

@@ -13,7 +13,7 @@ describe Allure::FileWriter do
     expect(File.exist?(json_file)).to be_truthy, "Expected file to exist"
   end
 
-  it "writes test result container" do
+  it "writes test result" do
     test_result = Allure::TestResult.new
     json_file = File.join(Allure::Config.output_dir, "#{test_result.uuid}-result.json")
     file_writer.write_test_result(test_result)

@@ -5,7 +5,6 @@ module Allure
     SCHEDULED = "scheduled"
     RUNNING = "running"
     FINISHED = "finished"
-    PENDING = "pending"
     INTERRUPTED = "interrupted"
   end
 end

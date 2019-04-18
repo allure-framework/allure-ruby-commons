@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "spec_helper"
+require_relative "../spec_helper"
 
 describe Allure::AllureLifecycle do
   let(:lifecycle) { Allure::AllureLifecycle.new }

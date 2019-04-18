@@ -9,7 +9,7 @@ module Allure
       @description = options[:description]
       @description_html = options[:description_html]
       @status = options[:status] || Status::BROKEN
-      @status_details = options[:status_detail] || StatusDetail.new
+      @status_details = options[:status_detail] || StatusDetails.new
       @stage = options[:stage] || Stage::SCHEDULED
       @steps = options[:steps] || []
       @attachments = options[:attachments] || []
@@ -17,7 +17,7 @@ module Allure
     end
 
     attr_accessor(
-      :name, :status, :status_detail, :stage, :description, :description_html,
+      :name, :status, :status_details, :stage, :description, :description_html,
       :steps, :attachments, :parameters, :start, :stop
     )
   end
