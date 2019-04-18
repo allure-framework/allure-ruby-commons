@@ -1,9 +1,13 @@
 # frozen_string_literal: true
 
 module Allure
-  StatusDetail = Struct.new(:known, :muted, :flaky, :message, :trace) do
+  class StatusDetail < JSONable
     def initialize(known: false, muted: false, flaky: false, message: nil, trace: nil)
-      super(known, muted, flaky, message, trace)
+      @known = known
+      @muted = muted
+      @flaky = flaky
+      @message = message
+      @trace = trace
     end
   end
 end

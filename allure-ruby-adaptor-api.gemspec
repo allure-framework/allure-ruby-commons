@@ -19,9 +19,8 @@ Gem::Specification.new do |s|
   s.executables = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.add_dependency "nokogiri", "~> 1.7"
-  s.add_dependency "uuid"
-  s.add_dependency "mimemagic"
+  s.add_dependency "uuid", "~> 2.3.9"
+  s.add_dependency "mimemagic", "~> 0.3.3"
   s.add_dependency "require_all", "~> 2.0"
 
   s.add_development_dependency "bundler", "~> 2.0"

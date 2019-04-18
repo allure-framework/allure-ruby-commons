@@ -24,6 +24,7 @@ module Allure
       end
 
       @current_test_result_container.stop = Util.timestamp
+      file_writer.write_test_result_container(@current_test_result_container)
       clear_current_test_container
     end
 
@@ -52,6 +53,7 @@ module Allure
 
       @current_test_case.stop = Util.timestamp
       @current_test_case.stage = Stage::FINISHED
+      file_writer.write_test_result(@current_test_case)
       clear_current_test_case
     end
 
@@ -82,6 +84,10 @@ module Allure
     end
 
     private
+
+    def file_writer
+      @file_writer ||= FileWriter.new
+    end
 
     def clear_current_test_container
       @current_test_result_container = nil

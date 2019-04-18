@@ -1,13 +1,15 @@
 # frozen_string_literal: true
 
+require_relative "jsonable"
+
 module Allure
-  class ExecutableItem
+  class ExecutableItem < JSONable
     def initialize(**options)
       @name = options[:name]
       @description = options[:description]
       @description_html = options[:description_html]
       @status = options[:status] || Status::BROKEN
-      @status_detail = options[:status_detail] || StatusDetail.new
+      @status_details = options[:status_detail] || StatusDetail.new
       @stage = options[:stage] || Stage::SCHEDULED
       @steps = options[:steps] || []
       @attachments = options[:attachments] || []

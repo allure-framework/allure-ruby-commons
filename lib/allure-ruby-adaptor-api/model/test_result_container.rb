@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
+require_relative "jsonable"
 module Allure
-  class TestResultContainer
+  class TestResultContainer < JSONable
     def initialize(uuid: UUID.generate, name: "Unnamed")
       @uuid = uuid
       @name = name
