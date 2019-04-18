@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
 $LOAD_PATH.unshift(File.expand_path("lib", __dir__))
-require "allure-ruby-adaptor-api/version"
+require "allure_ruby_commons/version"
 
 Gem::Specification.new do |s|
-  s.name = "allure-ruby-adaptor-api"
+  s.name = "allure_ruby_commons"
   s.version = Allure::Version::STRING
   s.platform = Gem::Platform::RUBY
-  s.authors = ["Ilya Sadykov", "Andrejs Cunskis"]
-  s.email = ["smecsia@yandex-team.ru", "andrejs.cunskis@gmail.com"]
+  s.authors = ["Andrejs Cunskis"]
+  s.email = ["andrejs.cunskis@gmail.com"]
   s.description = %(This is a helper library containing the basics for any ruby-based Allure adaptor.)
-  s.summary = "allure-ruby-adaptor-api_#{Allure::Version::STRING}"
+  s.summary = "allure_ruby_commons:#{Allure::Version::STRING}"
   s.homepage = "http://allure.qatools.ru"
   s.license = "Apache-2.0"
 

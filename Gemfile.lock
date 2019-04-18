@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    allure-ruby-adaptor-api (0.8.1)
+    allure_ruby_commons (0.8.1)
       mimemagic (~> 0.3.3)
       require_all (~> 2.0)
       uuid (~> 2.3.9)
@@ -83,7 +83,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  allure-ruby-adaptor-api!
+  allure_ruby_commons!
   bundler (~> 2.0)
   json (~> 2.2)
   pry

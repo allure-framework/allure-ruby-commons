@@ -2,7 +2,7 @@
 
 require "pry"
 require "rspec"
-require "allure-ruby-adaptor-api"
+require "allure_ruby_commons"
 
 Allure.configure do |c|
   c.output_dir = "allure"

@@ -1,16 +1,13 @@
 # frozen_string_literal: true
 
-require "require_all"
 require "logger"
-
-require_rel("allure-ruby-adaptor-api/**/*rb")
 
 module Allure
   class Config
-    class << self
-      DEFAULT_OUTPUT_DIR = "gen/allure-results"
-      DEFAULT_LOGGING_LEVEL = Logger::INFO
+    DEFAULT_OUTPUT_DIR = "gen/allure-results"
+    DEFAULT_LOGGING_LEVEL = Logger::INFO
 
+    class << self
       attr_writer :output_dir, :logging_level
 
       def output_dir
@@ -20,12 +17,6 @@ module Allure
       def logging_level
         @logging_level || DEFAULT_LOGGING_LEVEL
       end
-    end
-  end
-
-  class << self
-    def configure
-      yield(Config)
     end
   end
 end

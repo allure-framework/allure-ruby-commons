@@ -1104,6 +1104,7 @@ Style/MethodCallWithArgsParentheses:
     - gem
     - require
     - require_relative
+    - require_rel
     - source
     - task
     - raise
