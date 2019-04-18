@@ -113,6 +113,11 @@ module Allure
       fixture_result.stage = Stage::RUNNING
     end
 
+    # Update current fixture
+    # @yield [fixture] Set fixture values
+    #
+    # @yieldparam [Allure::FixtureResult] current fixture
+    # @return [void]
     def update_fixture
       raise Exception.new("Could not update fixture, fixture is not started") unless @current_fixture
 
@@ -125,6 +130,21 @@ module Allure
       @current_fixture.stop = Util.timestamp
       @current_fixture.stage = Stage::FINISHED
       clear_current_fixture
+    end
+
+    # Add attachment to current test or step
+    # @param [String] name Attachment name
+    # @param [File, String] source File or string to save as attachment
+    # @param [String] type attachment type defined in {Allure::ContentType}
+    # @return [void]
+    def attachment(name:, source:, type:)
+      attachment = prepare_attachment(name, type) || begin
+        raise Exception.new("Can't add attachment, unrecognized mime type: #{type}")
+      end
+      (@current_test_step || @current_test_case)&.attachments&.push(attachment) || begin
+        raise Exception.new("Can't add attachment, no test or step is running")
+      end
+      file_writer.write_attachment(source, attachment)
     end
 
     private
@@ -147,6 +167,12 @@ module Allure
 
     def clear_current_fixture
       @current_fixture = nil
+    end
+
+    def prepare_attachment(name, type)
+      extension = ContentType.to_extension(type) || return
+      file_name = "#{UUID.generate}-attachment.#{extension}"
+      Attachment.new(name: name, source: file_name, type: type)
     end
   end
 end

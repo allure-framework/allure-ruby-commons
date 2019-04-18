@@ -2,11 +2,10 @@
 
 module Allure
   class TestResult < ExecutableItem
-    def initialize(**options)
+    def initialize(uuid: UUID.generate, history_id: UUID.generate, **options)
       super
-      @uuid = options[:uuid] || UUID.new.generate
-      @history_id = options[:history_id] || UUID.new.generate
-      @full_name = full_name
+      @uuid = uuid
+      @history_id = history_id
       @labels = []
       @links = []
     end

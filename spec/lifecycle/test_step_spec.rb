@@ -4,6 +4,7 @@ require_relative "../spec_helper"
 
 describe Allure::AllureLifecycle do
   let(:lifecycle) { Allure::AllureLifecycle.new }
+  let(:file_writer) { double("FileWriter") }
 
   context "without exceptions" do
     before do
@@ -13,6 +14,8 @@ describe Allure::AllureLifecycle do
       lifecycle.start_test_container(@result_container)
       lifecycle.start_test_case(@test_case)
       lifecycle.start_test_step(@test_step)
+
+      allow(Allure::FileWriter).to receive(:new).and_return(file_writer)
     end
 
     it "starts test step" do
@@ -27,6 +30,21 @@ describe Allure::AllureLifecycle do
     it "updates test step" do
       lifecycle.update_test_step { |step| step.status = Allure::Status::CANCELED }
       expect(@test_step.status).to eq(Allure::Status::CANCELED)
+    end
+
+    it "adds attachment to step" do
+      allow(file_writer).to receive(:write_attachment)
+
+      lifecycle.attachment(
+        name: "Test Attachment",
+        source: "string attachment",
+        type: Allure::ContentType::TXT,
+      )
+      attachment = @test_step.attachments.last
+      aggregate_failures "Attachment should be added" do
+        expect(attachment.name).to eq("Test Attachment")
+        expect(attachment.type).to eq(Allure::ContentType::TXT)
+      end
     end
 
     it "stops test step" do

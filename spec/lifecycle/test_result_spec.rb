@@ -29,6 +29,21 @@ describe Allure::AllureLifecycle do
       expect(@test_case.full_name).to eq("Full name: Test")
     end
 
+    it "adds attachment to test" do
+      allow(file_writer).to receive(:write_attachment)
+
+      lifecycle.attachment(
+        name: "Test Attachment",
+        source: "string attachment",
+        type: Allure::ContentType::TXT,
+      )
+      attachment = @test_case.attachments.last
+      aggregate_failures "Attachment should be added" do
+        expect(attachment.name).to eq("Test Attachment")
+        expect(attachment.type).to eq(Allure::ContentType::TXT)
+      end
+    end
+
     it "stops test" do
       allow(file_writer).to receive(:write_test_result)
 
