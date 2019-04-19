@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "../spec_helper"
-
 describe Allure::AllureLifecycle do
   let(:lifecycle) { Allure::AllureLifecycle.new }
 
@@ -44,14 +42,15 @@ describe Allure::AllureLifecycle do
 
     it "updates fixture" do
       lifecycle.start_prepare_fixture(@fixture_result)
-
       lifecycle.update_fixture { |fixture| fixture.status = Allure::Status::CANCELED }
+      
       expect(@fixture_result.status).to eq(Allure::Status::CANCELED)
     end
 
     it "stops fixture" do
       lifecycle.start_prepare_fixture(@fixture_result)
       lifecycle.stop_fixture
+
       aggregate_failures "Should update parameters" do
         expect(@fixture_result.stop).to be_a(Numeric)
         expect(@fixture_result.stage).to eq(Allure::Stage::FINISHED)

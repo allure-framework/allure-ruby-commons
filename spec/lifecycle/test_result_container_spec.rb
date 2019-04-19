@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "../spec_helper"
-
 describe Allure::AllureLifecycle do
   let(:lifecycle) { Allure::AllureLifecycle.new }
   let(:file_writer) { double("FileWriter") }
@@ -18,13 +16,14 @@ describe Allure::AllureLifecycle do
 
   it "updates test result container" do
     lifecycle.update_test_container { |container| container.description = "Test description" }
+
     expect(@result_container.description).to eq("Test description")
   end
 
   it "stops test result container" do
     allow(file_writer).to receive(:write_test_result_container)
-
     lifecycle.stop_test_container
+
     expect(@result_container.stop).to be_a(Numeric)
   end
 

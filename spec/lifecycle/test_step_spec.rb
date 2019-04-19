@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "../spec_helper"
-
 describe Allure::AllureLifecycle do
   let(:lifecycle) { Allure::AllureLifecycle.new }
   let(:file_writer) { double("FileWriter") }
@@ -29,26 +27,13 @@ describe Allure::AllureLifecycle do
 
     it "updates test step" do
       lifecycle.update_test_step { |step| step.status = Allure::Status::CANCELED }
+
       expect(@test_step.status).to eq(Allure::Status::CANCELED)
-    end
-
-    it "adds attachment to step" do
-      allow(file_writer).to receive(:write_attachment)
-
-      lifecycle.attachment(
-        name: "Test Attachment",
-        source: "string attachment",
-        type: Allure::ContentType::TXT,
-      )
-      attachment = @test_step.attachments.last
-      aggregate_failures "Attachment should be added" do
-        expect(attachment.name).to eq("Test Attachment")
-        expect(attachment.type).to eq(Allure::ContentType::TXT)
-      end
     end
 
     it "stops test step" do
       lifecycle.stop_test_step
+
       aggregate_failures "Should update parameters" do
         expect(@test_step.stop).to be_a(Numeric)
         expect(@test_step.stage).to eq(Allure::Stage::FINISHED)

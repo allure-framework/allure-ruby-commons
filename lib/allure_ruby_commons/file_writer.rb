@@ -25,7 +25,7 @@ module Allure
     # @param [Allure::Attachment] attachment
     # @return [void]
     def write_attachment(source, attachment)
-      source.is_a?(File) ? copy(source.absolute_path, attachment.source) : write(attachment.source, source)
+      source.is_a?(File) ? copy(source.path, attachment.source) : write(attachment.source, source)
     end
 
     private
