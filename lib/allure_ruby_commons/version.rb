@@ -3,6 +3,6 @@
 module Allure # :nodoc:
   module Version # :nodoc:
     STRING = "2.10-beta.1"
-    ALLURE = "2.10"
+    ALLURE = "2.10.0"
   end
 end

@@ -2,11 +2,9 @@
 include:
 - "**/*.rb"
 exclude:
-- "spec/*"
-require:
-- rspec/expectations
-domains:
-- RSpec::Matchers
+- "spec/**/*"
+require: []
+domains: []
 reporters:
 - rubocop
 - require_not_found

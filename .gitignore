@@ -6,10 +6,16 @@
 *.ear
 *.gem
 
-.bundle
-target
-allure
+# Editors
+.vscode
 .idea
 *.iml
 *.ipr
 *.iws
+
+# Artifacts
+.bundle
+.yardoc
+target
+allure*
+.allure

@@ -6,10 +6,8 @@ describe Allure::AllureLifecycle do
 
   context "without exceptions" do
     before do
-      @result_container = Allure::TestResultContainer.new
-      @test_case = Allure::TestResult.new
-      lifecycle.start_test_container(@result_container)
-      lifecycle.start_test_case(@test_case)
+      @result_container = start_test_container(lifecycle, "Test Container")
+      @test_case = start_test_case(lifecycle, name: "Test Case")
 
       allow(Allure::FileWriter).to receive(:new).and_return(file_writer)
     end

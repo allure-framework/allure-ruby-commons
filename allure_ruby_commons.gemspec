@@ -21,11 +21,13 @@ Gem::Specification.new do |s|
 
   s.add_dependency "uuid", "~> 2.3.9"
   s.add_dependency "require_all", "~> 2.0"
+  s.add_dependency "json", "~> 2.2"
 
   s.add_development_dependency "bundler", "~> 2.0"
   s.add_development_dependency "rspec"
   s.add_development_dependency "rubocop", "~> 0.67"
   s.add_development_dependency "rubocop-performance", "~> 1.1"
+  s.add_development_dependency "rubyzip", "~> 1.2"
   s.add_development_dependency "pry"
   s.add_development_dependency "solargraph"
 end

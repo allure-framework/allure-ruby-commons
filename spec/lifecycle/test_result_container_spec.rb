@@ -5,8 +5,7 @@ describe Allure::AllureLifecycle do
   let(:file_writer) { double("FileWriter") }
 
   before do
-    @result_container = Allure::TestResultContainer.new
-    lifecycle.start_test_container(@result_container)
+    @result_container = start_test_container(lifecycle, "Test Container")
     allow(Allure::FileWriter).to receive(:new).and_return(file_writer)
   end
 

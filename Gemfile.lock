@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     allure_ruby_commons (2.10.pre.beta.1)
+      json (~> 2.2)
       require_all (~> 2.0)
       uuid (~> 2.3.9)
 
@@ -57,6 +58,7 @@ GEM
     rubocop-performance (1.1.0)
       rubocop (>= 0.67.0)
     ruby-progressbar (1.10.0)
+    rubyzip (1.2.2)
     solargraph (0.32.1)
       backport (~> 1.0)
       bundler (>= 1.17.2)
@@ -83,11 +85,11 @@ PLATFORMS
 DEPENDENCIES
   allure_ruby_commons!
   bundler (~> 2.0)
-  json (~> 2.2)
   pry
   rspec
   rubocop (~> 0.67)
   rubocop-performance (~> 1.1)
+  rubyzip (~> 1.2)
   solargraph
 
 BUNDLED WITH

@@ -5,55 +5,43 @@ describe Allure::AllureLifecycle do
 
   context "without exceptions" do
     before do
-      @result_container = Allure::TestResultContainer.new(name: "container name")
-      @fixture_result = Allure::FixtureResult.new(name: "Prepare fixture")
-      lifecycle.start_test_container(@result_container)
+      @result_container = start_test_container(lifecycle, "Test container")
     end
 
     it "starts prepare fixture" do
-      lifecycle.start_prepare_fixture(@fixture_result)
+      fixture_result = start_fixture(lifecycle, "Prepare fixture", "prepare")
 
-      aggregate_failures "Start and stage should be updated" do
-        expect(@fixture_result.start).to be_a(Numeric)
-        expect(@fixture_result.stage).to eq(Allure::Stage::RUNNING)
+      aggregate_failures "Fixture should be started" do
+        expect(fixture_result.start).to be_a(Numeric)
+        expect(fixture_result.stage).to eq(Allure::Stage::RUNNING)
+        expect(@result_container.befores.last).to eq(fixture_result)
       end
-    end
-
-    it "adds prepare fixture to result container" do
-      lifecycle.start_prepare_fixture(@fixture_result)
-
-      expect(@result_container.befores.last).to eq(@fixture_result)
     end
 
     it "starts teardown fixture" do
-      lifecycle.start_tear_down_fixture(@fixture_result)
+      fixture_result = start_fixture(lifecycle, "Teardown fixture", "tear_down")
 
-      aggregate_failures "Start and stage should be updated" do
-        expect(@fixture_result.start).to be_a(Numeric)
-        expect(@fixture_result.stage).to eq(Allure::Stage::RUNNING)
+      aggregate_failures "Fixture should be started" do
+        expect(fixture_result.start).to be_a(Numeric)
+        expect(fixture_result.stage).to eq(Allure::Stage::RUNNING)
+        expect(@result_container.afters.last).to eq(fixture_result)
       end
     end
 
-    it "adds teardown fixture to result container" do
-      lifecycle.start_tear_down_fixture(@fixture_result)
-
-      expect(@result_container.afters.last).to eq(@fixture_result)
-    end
-
     it "updates fixture" do
-      lifecycle.start_prepare_fixture(@fixture_result)
+      fixture_result = start_fixture(lifecycle, "Prepare fixture", "prepare")
       lifecycle.update_fixture { |fixture| fixture.status = Allure::Status::CANCELED }
-      
-      expect(@fixture_result.status).to eq(Allure::Status::CANCELED)
+
+      expect(fixture_result.status).to eq(Allure::Status::CANCELED)
     end
 
     it "stops fixture" do
-      lifecycle.start_prepare_fixture(@fixture_result)
+      fixture_result = start_fixture(lifecycle, "Prepare fixture", "prepare")
       lifecycle.stop_fixture
 
       aggregate_failures "Should update parameters" do
-        expect(@fixture_result.stop).to be_a(Numeric)
-        expect(@fixture_result.stage).to eq(Allure::Stage::FINISHED)
+        expect(fixture_result.stop).to be_a(Numeric)
+        expect(fixture_result.stage).to eq(Allure::Stage::FINISHED)
       end
     end
   end

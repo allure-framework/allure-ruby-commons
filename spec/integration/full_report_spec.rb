@@ -1,39 +1,52 @@
 # frozen_string_literal: true
 
-require_relative "../spec_helper"
+require_relative "../downloader"
 
 describe Allure do
+  let(:lifecycle) { Allure.lifecycle }
+
+  before(:all) do
+    Allure.configure { |conf| conf.output_dir = "allure-results/integration" }
+  end
+
   before do
-    Allure.configure { |conf| conf.output_dir = "allure/integration" }
-    lifecycle = Allure.lifecycle
+    image = File.new(File.join(Dir.pwd, "spec/images/ruby-logo.png"))
 
-    lifecycle.start_test_container(Allure::TestResultContainer.new(name: "Result container"))
-    lifecycle.start_prepare_fixture(Allure::FixtureResult.new(name: "Before"))
-    lifecycle.update_fixture { |fix| fix.status = Allure::Status::PASSED }
-    lifecycle.stop_fixture
+    start_test_container(lifecycle, "Result Container")
+    add_fixture(lifecycle, "Before", "prepare")
 
-    lifecycle.start_test_case(Allure::TestResult.new(name: "Some scenario", full_name: "feature: Some scenario"))
-    lifecycle.start_test_step(Allure::StepResult.new(name: "Some step"))
+    start_test_case(lifecycle, name: "Some scenario", full_name: "feature: Some scenario")
+    start_test_step(lifecycle, name: "Some step")
+
     lifecycle.update_test_step do |step|
       step.status = Allure::Status::FAILED
       step.status_details.message = "Fuuu, I failed"
-      step.status_details.trace = "I failed because, so sad"
+      step.status_details.trace = "I failed because I cought an exception to the knee"
     end
+
+    lifecycle.attachment(name: "Test Attachment", source: "string attachment", type: Allure::ContentType::TXT)
+
     lifecycle.stop_test_step
-    lifecycle.update_test_case do |test_case|
-      test_case.status = Allure::Status::FAILED
-      test_case.status_details.message = "Fuuu, I failed"
-      test_case.status_details.trace = "I failed because, so sad"
+
+    lifecycle.update_test_case do |tc|
+      tc.status = Allure::Status::FAILED
+      tc.status_details.message = "Fuuu, I failed"
+      tc.status_details.trace = "I failed because I cought an exception to the knee"
     end
+
+    lifecycle.attachment(name: "Test Attachment", source: image, type: Allure::ContentType::PNG)
+
     lifecycle.stop_test_case
-    lifecycle.start_tear_down_fixture(Allure::FixtureResult.new(name: "After"))
-    lifecycle.update_fixture { |fix| fix.status = Allure::Status::PASSED }
-    lifecycle.stop_fixture
+
+    add_fixture(lifecycle, "After", "tear_down")
 
     lifecycle.stop_test_container
   end
 
-  it "generate valid json", skip: true do
-    # TODO: add check that allure cli can parse full report
+  it "generate valid json" do
+    allure_cli = Allure.allure_bin
+    expect(`#{allure_cli} generate -c #{Allure::Config.output_dir}`.chomp).to(
+      eq("Report successfully generated to allure-report"),
+    )
   end
 end

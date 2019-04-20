@@ -6,19 +6,14 @@ describe Allure::AllureLifecycle do
 
   context "without exceptions" do
     before do
-      @result_container = Allure::TestResultContainer.new
-      @test_case = Allure::TestResult.new(name: "Test case", full_name: "Full name")
-      @test_step = Allure::StepResult.new(name: "Step name", descrption: "step description")
-      lifecycle.start_test_container(@result_container)
-      lifecycle.start_test_case(@test_case)
-      lifecycle.start_test_step(@test_step)
+      @result_container = start_test_container(lifecycle, "Test Container")
+      @test_case = start_test_case(lifecycle, name: "Test case", full_name: "Full name")
+      @test_step = start_test_step(lifecycle, name: "Step name", descrption: "step description")
 
       allow(Allure::FileWriter).to receive(:new).and_return(file_writer)
     end
 
     it "starts test step" do
-      lifecycle.start_test_step(@test_step)
-
       aggregate_failures "should start test step and add to test case" do
         expect(@test_step.start).to be_a(Numeric)
         expect(@test_case.steps.last).to eq(@test_step)
@@ -47,8 +42,8 @@ describe Allure::AllureLifecycle do
     end
 
     it "no running test step" do
-      lifecycle.start_test_container(Allure::TestResultContainer.new)
-      lifecycle.start_test_case(Allure::TestResult.new)
+      start_test_container(lifecycle, "Test Container")
+      start_test_case(lifecycle, name: "Test case", full_name: "Full name")
 
       aggregate_failures "should raise exception" do
         expect { lifecycle.update_test_step { |step| step.name = "Test" } }.to raise_error(/no step is running/)
