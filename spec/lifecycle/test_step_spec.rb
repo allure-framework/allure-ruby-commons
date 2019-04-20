@@ -3,6 +3,11 @@
 describe Allure::AllureLifecycle do
   let(:lifecycle) { Allure::AllureLifecycle.new }
   let(:file_writer) { double("FileWriter") }
+  let(:logger) { double("Logger") }
+
+  before do
+    allow(Logger).to receive(:new).and_return(logger)
+  end
 
   context "without exceptions" do
     before do
@@ -36,19 +41,22 @@ describe Allure::AllureLifecycle do
     end
   end
 
-  context "raises exception" do
+  context "logs error" do
     it "no running test case" do
-      expect { lifecycle.start_test_step(Allure::StepResult.new) }.to raise_error(/no test case is running/)
+      expect(logger).to receive(:error).with(/no test case is running/)
+
+      start_test_step(lifecycle, name: "Step name", descrption: "step description")
     end
 
     it "no running test step" do
       start_test_container(lifecycle, "Test Container")
       start_test_case(lifecycle, name: "Test case", full_name: "Full name")
 
-      aggregate_failures "should raise exception" do
-        expect { lifecycle.update_test_step { |step| step.name = "Test" } }.to raise_error(/no step is running/)
-        expect { lifecycle.stop_test_step }.to raise_error(/no step is running/)
-      end
+      expect(logger).to receive(:error).with(/no step is running/)
+      expect(logger).to receive(:error).with(/no step is running/)
+
+      lifecycle.update_test_step { |step| step.name = "Test" }
+      lifecycle.stop_test_step
     end
   end
 end

@@ -3,6 +3,11 @@
 describe Allure::AllureLifecycle do
   let(:lifecycle) { Allure::AllureLifecycle.new }
   let(:file_writer) { double("FileWriter") }
+  let(:logger) { double("Logger") }
+
+  before do
+    allow(Logger).to receive(:new).and_return(logger)
+  end
 
   context "without exceptions" do
     before do
@@ -44,18 +49,21 @@ describe Allure::AllureLifecycle do
     end
   end
 
-  context "raises exception" do
+  context "logs error" do
     it "no running container" do
-      expect { lifecycle.start_test_case(Allure::TestResult.new) }.to raise_error(/Could not start test case/)
+      expect(logger).to receive(:error).with(/Could not start test case/)
+
+      start_test_case(lifecycle, name: "Test Case")
     end
 
     it "no running test" do
-      lifecycle.start_test_container(Allure::TestResultContainer.new)
+      start_test_container(lifecycle, "Test Container")
 
-      aggregate_failures "Should raise exception" do
-        expect { lifecycle.update_test_case { |t| t.full_name = "Test" } }.to raise_error(/Could not update test/)
-        expect { lifecycle.stop_test_case }.to raise_error(/Could not stop test/)
-      end
+      expect(logger).to receive(:error).with(/Could not update test/)
+      expect(logger).to receive(:error).with(/Could not stop test/)
+
+      lifecycle.update_test_case { |t| t.full_name = "Test" }
+      lifecycle.stop_test_case
     end
   end
 end

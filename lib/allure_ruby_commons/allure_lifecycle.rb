@@ -12,7 +12,7 @@ module Allure
 
     def update_test_container
       unless @current_test_result_container
-        raise Exception.new("Could not update test container, no container is running.")
+        return logger.error("Could not update test container, no container is running.")
       end
 
       yield(@current_test_result_container)
@@ -20,7 +20,7 @@ module Allure
 
     def stop_test_container
       unless @current_test_result_container
-        raise Exception.new("Could not stop test container, no container is running.")
+        return logger.error("Could not stop test container, no container is running.")
       end
 
       @current_test_result_container.stop = Util.timestamp
@@ -33,7 +33,7 @@ module Allure
     # @return [Allure::TestResult]
     def start_test_case(test_result)
       unless @current_test_result_container
-        raise Exception.new("Could not start test case, test container is not started")
+        return logger.error("Could not start test case, test container is not started")
       end
 
       test_result.start = Util.timestamp
@@ -43,13 +43,13 @@ module Allure
     end
 
     def update_test_case
-      raise Exception.new("Could not update test case, no test case running") unless @current_test_case
+      return logger.error("Could not update test case, no test case running") unless @current_test_case
 
       yield(@current_test_case)
     end
 
     def stop_test_case
-      raise Exception.new("Could not stop test case, no test case is running") unless @current_test_case
+      return logger.error("Could not stop test case, no test case is running") unless @current_test_case
 
       @current_test_case.stop = Util.timestamp
       @current_test_case.stage = Stage::FINISHED
@@ -61,7 +61,7 @@ module Allure
     # @param [Allure::StepResult] step_result
     # @return [Allure]
     def start_test_step(step_result)
-      raise Exception.new("Could not start test step, no test case is running") unless @current_test_case
+      return logger.error("Could not start test step, no test case is running") unless @current_test_case
 
       step_result.start = Util.timestamp
       step_result.stage = Stage::RUNNING
@@ -70,13 +70,13 @@ module Allure
     end
 
     def update_test_step
-      raise Exception.new("Could not update test step, no step is running") unless @current_test_step
+      return logger.error("Could not update test step, no step is running") unless @current_test_step
 
       yield(@current_test_step)
     end
 
     def stop_test_step
-      raise Exception.new("Could not stop test step, no step is running") unless @current_test_step
+      return logger.error("Could not stop test step, no step is running") unless @current_test_step
 
       @current_test_step.stop = Util.timestamp
       @current_test_step.stage = Stage::FINISHED
@@ -87,7 +87,7 @@ module Allure
     # @param [Allure::FixtureResult] fixture_result
     # @return [Allure::FixtureResult]
     def start_prepare_fixture(fixture_result)
-      start_fixture(fixture_result)
+      start_fixture(fixture_result) || return
       @current_test_result_container.befores.push(fixture_result)
       @current_fixture = fixture_result
     end
@@ -106,7 +106,8 @@ module Allure
     # @return [Allure::FixtureResult]
     def start_fixture(fixture_result)
       unless @current_test_result_container
-        raise Exception.new("Could not start fixture, test container is not started")
+        logger.error("Could not start fixture, test container is not started")
+        return false
       end
 
       fixture_result.start = Util.timestamp
@@ -119,13 +120,13 @@ module Allure
     # @yieldparam [Allure::FixtureResult] current fixture
     # @return [void]
     def update_fixture
-      raise Exception.new("Could not update fixture, fixture is not started") unless @current_fixture
+      return logger.error("Could not update fixture, fixture is not started") unless @current_fixture
 
       yield(@current_fixture)
     end
 
     def stop_fixture
-      raise Exception.new("Could not stop fixture, fixture is not started") unless @current_fixture
+      return logger.error("Could not stop fixture, fixture is not started") unless @current_fixture
 
       @current_fixture.stop = Util.timestamp
       @current_fixture.stage = Stage::FINISHED
@@ -139,15 +140,19 @@ module Allure
     # @return [void]
     def attachment(name:, source:, type:)
       attachment = prepare_attachment(name, type) || begin
-        raise Exception.new("Can't add attachment, unrecognized mime type: #{type}")
+        return logger.error("Can't add attachment, unrecognized mime type: #{type}")
       end
       (@current_test_step || @current_test_case)&.attachments&.push(attachment) || begin
-        raise Exception.new("Can't add attachment, no test or step is running")
+        return logger.error("Can't add attachment, no test or step is running")
       end
       file_writer.write_attachment(source, attachment)
     end
 
     private
+
+    def logger
+      @logger ||= Logger.new(STDOUT, level: Config.logging_level)
+    end
 
     def file_writer
       @file_writer ||= FileWriter.new

@@ -43,7 +43,7 @@ describe Allure do
     lifecycle.stop_test_container
   end
 
-  it "generate valid json" do
+  it "generate valid json", integration: true do
     allure_cli = Allure.allure_bin
     expect(`#{allure_cli} generate -c #{Allure::Config.output_dir}`.chomp).to(
       eq("Report successfully generated to allure-report"),

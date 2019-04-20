@@ -1,12 +1,16 @@
 # frozen_string_literal: true
 
+require "logger"
+
 describe Allure::AllureLifecycle do
   let(:lifecycle) { Allure::AllureLifecycle.new }
   let(:file_writer) { double("FileWriter") }
+  let(:logger) { double("Logger") }
 
   before do
     @result_container = start_test_container(lifecycle, "Test Container")
     allow(Allure::FileWriter).to receive(:new).and_return(file_writer)
+    allow(Logger).to receive(:new).and_return(logger)
   end
 
   it "starts test result container" do
@@ -32,15 +36,15 @@ describe Allure::AllureLifecycle do
     lifecycle.stop_test_container
   end
 
-  it "raises exception when stopping test result container" do
+  it "logs error when stopping or updating test result container" do
     allow(file_writer).to receive(:write_test_result_container)
+
+    expect(logger).to receive(:error).with(/Could not update test container/)
+    expect(logger).to receive(:error).with(/Could not stop test container/)
+
     lifecycle.stop_test_container
 
-    aggregate_failures "Should raise exception" do
-      expect { lifecycle.stop_test_container }.to raise_error(/Could not stop test container/)
-      expect { lifecycle.update_test_container { |c| c.description = "Test" } }.to raise_error(
-        /Could not update test container/,
-      )
-    end
+    lifecycle.update_test_container { |c| c.description = "Test" }
+    lifecycle.stop_test_container
   end
 end

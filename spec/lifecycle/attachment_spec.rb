@@ -3,6 +3,7 @@
 describe Allure::AllureLifecycle do
   let(:lifecycle) { Allure::AllureLifecycle.new }
   let(:file_writer) { double("FileWriter") }
+  let(:logger) { double("Logger") }
   let(:attach_opts) do
     {
       name: "Test Attachment",
@@ -16,6 +17,7 @@ describe Allure::AllureLifecycle do
     @test_case = start_test_case(lifecycle, name: "Test case", full_name: "Full name")
 
     allow(Allure::FileWriter).to receive(:new).and_return(file_writer)
+    allow(Logger).to receive(:new).and_return(logger)
   end
 
   it "adds attachment to step" do
@@ -43,20 +45,22 @@ describe Allure::AllureLifecycle do
     end
   end
 
-  it "raises no running test case exception" do
+  it "logs no running test case error" do
     allow(file_writer).to receive(:write_test_result)
 
+    expect(logger).to receive(:error).with(/no test or step is running/)
+
     lifecycle.stop_test_case
-    expect { lifecycle.attachment(**attach_opts) }.to raise_error(/no test or step is running/)
+    lifecycle.attachment(**attach_opts)
   end
 
-  it "raises incorrect mime type exception" do
-    expect do
-      lifecycle.attachment(
-        name: "Test Attachment",
-        source: "string attachment",
-        type: "nonsence",
-      )
-    end.to raise_error(/unrecognized mime type: nonsence/)
+  it "logs incorrect mime type error" do
+    expect(logger).to receive(:error).with(/unrecognized mime type: nonsence/)
+
+    lifecycle.attachment(
+      name: "Test Attachment",
+      source: "string attachment",
+      type: "nonsence",
+    )
   end
 end

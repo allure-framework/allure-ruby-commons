@@ -2,6 +2,11 @@
 
 describe Allure::AllureLifecycle do
   let(:lifecycle) { Allure::AllureLifecycle.new }
+  let(:logger) { double("Logger") }
+
+  before do
+    allow(Logger).to receive(:new).and_return(logger)
+  end
 
   context "without exceptions" do
     before do
@@ -46,22 +51,21 @@ describe Allure::AllureLifecycle do
     end
   end
 
-  context "raises exception" do
+  context "logs error message" do
     it "no running container" do
-      expect { lifecycle.start_prepare_fixture(Allure::FixtureResult.new) }.to raise_error(
-        /Could not start fixture/,
-      )
+      expect(logger).to receive(:error).with(/Could not start fixture/).and_return(true)
+
+      start_fixture(lifecycle, "Prepare fixture", "prepare")
     end
 
     it "no running fixture" do
-      lifecycle.start_test_container(Allure::TestResultContainer.new)
+      start_test_container(lifecycle, "Test container")
 
-      aggregate_failures "Should raise exception" do
-        expect { lifecycle.stop_fixture }.to raise_error(/Could not stop fixture/)
-        expect { lifecycle.update_fixture { |t| t.full_name = "Test" } }.to raise_error(
-          /Could not update fixture/,
-        )
-      end
+      expect(logger).to receive(:error).with(/Could not stop fixture/).and_return(true)
+      expect(logger).to receive(:error).with(/Could not update fixture/).and_return(true)
+
+      lifecycle.update_fixture { |t| t.full_name = "Test" }
+      lifecycle.stop_fixture
     end
   end
 end
