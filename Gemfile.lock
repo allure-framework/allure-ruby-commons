@@ -40,7 +40,7 @@ GEM
       rspec-mocks (~> 3.8.0)
     rspec-core (3.8.0)
       rspec-support (~> 3.8.0)
-    rspec-expectations (3.8.2)
+    rspec-expectations (3.8.3)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.8.0)
     rspec-mocks (3.8.0)
@@ -85,12 +85,12 @@ PLATFORMS
 DEPENDENCIES
   allure_ruby_commons!
   bundler (~> 2.0)
-  pry
-  rspec
+  pry (~> 0.12)
+  rspec (~> 3.8)
   rubocop (~> 0.67)
   rubocop-performance (~> 1.1)
   rubyzip (~> 1.2)
-  solargraph
+  solargraph (~> 0.32)
 
 BUNDLED WITH
    2.0.1
