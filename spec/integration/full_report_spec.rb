@@ -6,7 +6,7 @@ describe Allure do
   let(:lifecycle) { Allure.lifecycle }
 
   before(:all) do
-    Allure.configure { |conf| conf.output_dir = "allure-results/integration" }
+    Allure.configure { |conf| conf.output_dir = "reports/allure-results/integration" }
   end
 
   before do
@@ -45,8 +45,8 @@ describe Allure do
 
   it "generate valid json", integration: true do
     allure_cli = Allure.allure_bin
-    expect(`#{allure_cli} generate -c #{Allure::Config.output_dir}`.chomp).to(
-      eq("Report successfully generated to allure-report"),
+    expect(`#{allure_cli} generate -c #{Allure::Config.output_dir} -o reports/allure-report`.chomp).to(
+      eq("Report successfully generated to reports/allure-report"),
     )
   end
 end

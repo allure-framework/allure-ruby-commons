@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(File.expand_path("lib", __dir__))
 require "allure_ruby_commons/version"
 
 Gem::Specification.new do |s|
-  s.name = "allure_ruby_commons"
+  s.name = "allure-ruby-commons"
   s.version = Allure::Version::STRING
   s.platform = Gem::Platform::RUBY
   s.authors = ["Andrejs Cunskis"]

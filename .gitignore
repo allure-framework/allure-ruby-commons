@@ -11,5 +11,5 @@
 # Artifacts
 .bundle
 .yardoc
-allure*
+reports
 .allure

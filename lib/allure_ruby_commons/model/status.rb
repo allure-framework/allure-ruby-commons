@@ -7,5 +7,6 @@ module Allure
     PASSED = :passed
     PENDING = :pending
     CANCELED = :canceled
+    SKIPPED = :skipped
   end
 end

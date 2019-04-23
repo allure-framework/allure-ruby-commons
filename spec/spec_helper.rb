@@ -2,9 +2,7 @@
 
 require "pry"
 require "rspec"
-require "allure_ruby_commons"
-
-Allure.configure { |config| config.output_dir = "allure-results" }
+require "allure-ruby-commons"
 
 def start_test_container(lifecycle, name)
   lifecycle.start_test_container(Allure::TestResultContainer.new(name: name))

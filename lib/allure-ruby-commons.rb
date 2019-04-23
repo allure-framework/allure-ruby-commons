@@ -1,3 +1,4 @@
+# rubocop:disable Naming/FileName
 # frozen_string_literal: true
 
 require "require_all"
@@ -22,3 +23,4 @@ module Allure
     end
   end
 end
+# rubocop:enable Naming/FileName

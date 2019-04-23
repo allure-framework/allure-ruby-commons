@@ -9,7 +9,7 @@ module Allure
       @description = options[:description]
       @description_html = options[:description_html]
       @status = options[:status] || Status::BROKEN
-      @status_details = options[:status_detail] || StatusDetails.new
+      @status_details = options[:status_details] || StatusDetails.new
       @stage = options[:stage] || Stage::SCHEDULED
       @steps = options[:steps] || []
       @attachments = options[:attachments] || []

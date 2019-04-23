@@ -6,8 +6,9 @@ module Allure
       super
       @uuid = uuid
       @history_id = history_id
-      @labels = []
-      @links = []
+      @full_name = options[:full_name] || "Unnamed"
+      @labels = options[:labels] || []
+      @links = options[:links] || []
     end
 
     attr_accessor :uuid, :history_id, :full_name, :labels, :links

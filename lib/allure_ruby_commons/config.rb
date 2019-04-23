@@ -4,7 +4,7 @@ require "logger"
 
 module Allure
   class Config
-    DEFAULT_OUTPUT_DIR = "gen/allure-results"
+    DEFAULT_OUTPUT_DIR = "reports/allure-results"
     DEFAULT_LOGGING_LEVEL = Logger::INFO
 
     class << self
