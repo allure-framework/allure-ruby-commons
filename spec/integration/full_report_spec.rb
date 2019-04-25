@@ -24,7 +24,7 @@ describe Allure do
       step.status_details.trace = "I failed because I cought an exception to the knee"
     end
 
-    lifecycle.attachment(name: "Test Attachment", source: "string attachment", type: Allure::ContentType::TXT)
+    lifecycle.add_attachment(name: "Test Attachment", source: "string attachment", type: Allure::ContentType::TXT)
 
     lifecycle.stop_test_step
 
@@ -34,7 +34,7 @@ describe Allure do
       tc.status_details.trace = "I failed because I cought an exception to the knee"
     end
 
-    lifecycle.attachment(name: "Test Attachment", source: image, type: Allure::ContentType::PNG)
+    lifecycle.add_attachment(name: "Test Attachment", source: image, type: Allure::ContentType::PNG)
 
     lifecycle.stop_test_case
 

@@ -138,13 +138,31 @@ module Allure
     # @param [File, String] source File or string to save as attachment
     # @param [String] type attachment type defined in {Allure::ContentType}
     # @return [void]
-    def attachment(name:, source:, type:)
+    def add_attachment(name:, source:, type:)
       attachment = prepare_attachment(name, type) || begin
         return logger.error("Can't add attachment, unrecognized mime type: #{type}")
       end
       (@current_test_step || @current_test_case)&.attachments&.push(attachment) || begin
         return logger.error("Can't add attachment, no test or step is running")
       end
+      write_attachment(source, attachment)
+    end
+
+    # Create attachment object
+    # @param [String] name
+    # @param [String] type
+    # @return [Allure::Attachment]
+    def prepare_attachment(name, type)
+      extension = ContentType.to_extension(type) || return
+      file_name = "#{UUID.generate}-attachment.#{extension}"
+      Attachment.new(name: name, source: file_name, type: type)
+    end
+
+    # Write attachment file
+    # @param [File, String] source
+    # @param [Allure::Attachment] attachment
+    # @return [void]
+    def write_attachment(source, attachment)
       file_writer.write_attachment(source, attachment)
     end
 
@@ -172,12 +190,6 @@ module Allure
 
     def clear_current_fixture
       @current_fixture = nil
-    end
-
-    def prepare_attachment(name, type)
-      extension = ContentType.to_extension(type) || return
-      file_name = "#{UUID.generate}-attachment.#{extension}"
-      Attachment.new(name: name, source: file_name, type: type)
     end
   end
 end

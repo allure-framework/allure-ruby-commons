@@ -24,7 +24,7 @@ describe Allure::AllureLifecycle do
     expect(file_writer).to receive(:write_attachment).with("string attachment", duck_type(:name, :source, :type))
 
     test_step = start_test_step(lifecycle, name: "Step name", descrption: "step description")
-    lifecycle.attachment(**attach_opts)
+    lifecycle.add_attachment(**attach_opts)
     attachment = test_step.attachments.last
 
     aggregate_failures "Attachment should be added" do
@@ -36,7 +36,7 @@ describe Allure::AllureLifecycle do
   it "adds attachment to test" do
     expect(file_writer).to receive(:write_attachment).with("string attachment", duck_type(:name, :source, :type))
 
-    lifecycle.attachment(**attach_opts)
+    lifecycle.add_attachment(**attach_opts)
     attachment = @test_case.attachments.last
 
     aggregate_failures "Attachment should be added" do
@@ -51,13 +51,13 @@ describe Allure::AllureLifecycle do
     expect(logger).to receive(:error).with(/no test or step is running/)
 
     lifecycle.stop_test_case
-    lifecycle.attachment(**attach_opts)
+    lifecycle.add_attachment(**attach_opts)
   end
 
   it "logs incorrect mime type error" do
     expect(logger).to receive(:error).with(/unrecognized mime type: nonsence/)
 
-    lifecycle.attachment(
+    lifecycle.add_attachment(
       name: "Test Attachment",
       source: "string attachment",
       type: "nonsence",
