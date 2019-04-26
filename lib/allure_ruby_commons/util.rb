@@ -5,12 +5,8 @@ require "socket"
 module Allure
   class Util
     class << self
-      HOSTNAME = Socket.gethostname
-
-      def add_default_labels(labels = {})
-        labels[:thread] ||= Thread.current.object_id
-        labels[:host] ||= HOSTNAME
-        labels
+      def default_labels
+        [Label.new("thread", Thread.current.object_id), Label.new("host", Socket.gethostname)]
       end
 
       def timestamp(time = nil)

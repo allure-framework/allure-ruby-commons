@@ -47,6 +47,13 @@ describe Allure::AllureLifecycle do
 
       lifecycle.stop_test_case
     end
+
+    it "adds default host and thread label" do
+      expect(@test_case.labels).to include(
+        Allure::Label.new("thread", Thread.current.object_id),
+        Allure::Label.new("host", Socket.gethostname),
+      )
+    end
   end
 
   context "logs error" do

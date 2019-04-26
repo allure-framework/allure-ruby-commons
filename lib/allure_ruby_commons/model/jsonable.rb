@@ -16,6 +16,16 @@ module Allure
       as_json(*options).to_json(*options)
     end
 
+    def ==(other)
+      self.class == other.class && state == other.state
+    end
+
+    protected
+
+    def state
+      instance_variables.map { |var| instance_variable_get(var) }
+    end
+
     private
 
     def camelcase(str)
