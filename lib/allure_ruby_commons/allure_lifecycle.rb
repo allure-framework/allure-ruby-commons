@@ -38,7 +38,7 @@ module Allure
 
       test_result.start = Util.timestamp
       test_result.stage = Stage::RUNNING
-      test_result.labels.push(*Util.default_labels)
+      test_result.labels.push(ResultUtils.thread_label, ResultUtils.host_label)
       @current_test_result_container.children.push(test_result.uuid)
       @current_test_case = test_result
     end
