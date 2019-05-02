@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     allure-ruby-commons (2.10.0.beta1)
-      json (~> 2.2)
+      json (>= 1.8, < 3)
       require_all (~> 2.0)
       uuid (~> 2.3.9)
 
