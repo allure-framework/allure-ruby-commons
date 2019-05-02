@@ -27,6 +27,15 @@ module Allure
     def configure
       yield(Config)
     end
+
+    # Add attachment to current test or step
+    # @param [String] name Attachment name
+    # @param [File, String] source File or string to save as attachment
+    # @param [String] type attachment type defined in {Allure::ContentType}
+    # @return [void]
+    def add_attachment(name:, source:, type:)
+      lifecycle.add_attachment(name: name, source: source, type: type)
+    end
   end
 end
 # rubocop:enable Naming/FileName
