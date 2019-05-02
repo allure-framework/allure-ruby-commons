@@ -37,6 +37,14 @@ module Allure
     def add_attachment(name:, source:, type:, test_case: false)
       lifecycle.add_attachment(name: name, source: source, type: type, test_case: test_case)
     end
+
+    # Add link to test case
+    # @param [String] name
+    # @param [String] url
+    # @return [void]
+    def add_link(name, url)
+      lifecycle.add_link(name, url)
+    end
   end
 end
 # rubocop:enable Naming/FileName

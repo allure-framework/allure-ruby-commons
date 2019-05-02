@@ -20,6 +20,7 @@ describe Allure do
     add_fixture(lifecycle, "Before", "prepare")
 
     start_test_case(lifecycle, name: "Some scenario", full_name: "feature: Some scenario")
+    lifecycle.add_link("Custom Link", "http://www.custom-link.com")
     lifecycle.update_test_case do |test_case|
       test_case.links.push(
         Allure::ResultUtils.tms_link("QA-1"),
