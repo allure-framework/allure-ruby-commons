@@ -20,6 +20,19 @@ describe Allure::AllureLifecycle do
     allow(Logger).to receive(:new).and_return(logger)
   end
 
+  it "adds attachment to fixture" do
+    expect(file_writer).to receive(:write_attachment).with("string attachment", duck_type(:name, :source, :type))
+
+    fixture = lifecycle.start_prepare_fixture(Allure::FixtureResult.new(name: "Prepare fixture"))
+    lifecycle.add_attachment(**attach_opts)
+    attachment = fixture.attachments.last
+
+    aggregate_failures "Attachment should be added" do
+      expect(attachment.name).to eq("Test Attachment")
+      expect(attachment.type).to eq(Allure::ContentType::TXT)
+    end
+  end
+
   it "adds attachment to step" do
     expect(file_writer).to receive(:write_attachment).with("string attachment", duck_type(:name, :source, :type))
 
@@ -45,10 +58,24 @@ describe Allure::AllureLifecycle do
     end
   end
 
+  it "adds attachment to test explicitly" do
+    expect(file_writer).to receive(:write_attachment).with("string attachment", duck_type(:name, :source, :type))
+
+    test_step = start_test_step(lifecycle, name: "Step name", descrption: "step description")
+    lifecycle.add_attachment(**attach_opts, test_case: true)
+    attachment = @test_case.attachments.last
+
+    aggregate_failures "Attachment should be added" do
+      expect(attachment.name).to eq("Test Attachment")
+      expect(attachment.type).to eq(Allure::ContentType::TXT)
+      expect(test_step.attachments).to be_empty
+    end
+  end
+
   it "logs no running test case error" do
     allow(file_writer).to receive(:write_test_result)
 
-    expect(logger).to receive(:error).with(/no test or step is running/)
+    expect(logger).to receive(:error).with(/no test, step or fixture is running/)
 
     lifecycle.stop_test_case
     lifecycle.add_attachment(**attach_opts)

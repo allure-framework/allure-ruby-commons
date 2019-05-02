@@ -32,9 +32,10 @@ module Allure
     # @param [String] name Attachment name
     # @param [File, String] source File or string to save as attachment
     # @param [String] type attachment type defined in {Allure::ContentType}
+    # @param [Boolean] test_case add attachment to current test case
     # @return [void]
-    def add_attachment(name:, source:, type:)
-      lifecycle.add_attachment(name: name, source: source, type: type)
+    def add_attachment(name:, source:, type:, test_case: false)
+      lifecycle.add_attachment(name: name, source: source, type: type, test_case: test_case)
     end
   end
 end
