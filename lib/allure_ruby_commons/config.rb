@@ -8,6 +8,7 @@ module Allure
     DEFAULT_LOGGING_LEVEL = Logger::INFO
 
     class << self
+      attr_accessor :tms_link_pattern, :issue_link_pattern
       attr_writer :output_dir, :logging_level
 
       def output_dir

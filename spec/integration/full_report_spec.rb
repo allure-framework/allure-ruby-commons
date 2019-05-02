@@ -6,7 +6,11 @@ describe Allure do
   let(:lifecycle) { Allure.lifecycle }
 
   before(:all) do
-    Allure.configure { |conf| conf.output_dir = "reports/allure-results/integration" }
+    Allure.configure do |conf|
+      conf.output_dir = "reports/allure-results/integration"
+      conf.issue_link_pattern = "http://jira.com/{}"
+      conf.tms_link_pattern = "http://jira.com/{}"
+    end
   end
 
   before do
@@ -16,8 +20,18 @@ describe Allure do
     add_fixture(lifecycle, "Before", "prepare")
 
     start_test_case(lifecycle, name: "Some scenario", full_name: "feature: Some scenario")
-    start_test_step(lifecycle, name: "Some step")
+    lifecycle.update_test_case do |test_case|
+      test_case.links.push(
+        Allure::ResultUtils.tms_link("QA-1"),
+        Allure::ResultUtils.issue_link("DEV-1"),
+      )
+      test_case.labels.push(
+        Allure::ResultUtils.suite_label("Some scenario"),
+        Allure::ResultUtils.severity_label("blocker"),
+      )
+    end
 
+    start_test_step(lifecycle, name: "Some step")
     lifecycle.update_test_step do |step|
       step.status = Allure::Status::FAILED
       step.status_details.message = "Fuuu, I failed"

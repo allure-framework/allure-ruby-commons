@@ -13,6 +13,12 @@ module Allure
       Thread.current[:lifecycle] ||= AllureLifecycle.new
     end
 
+    # Get allure configuration
+    # @return [Allure::Config]
+    def configuration
+      Config
+    end
+
     # Set allure configuration
     # @yield [config]
     #
