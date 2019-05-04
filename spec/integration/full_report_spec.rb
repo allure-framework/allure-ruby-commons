@@ -11,6 +11,8 @@ describe Allure do
     end
   end
 
+  before(:all) { FileUtils.remove_dir(Allure::Config.output_dir) }
+
   before do
     image = File.new(File.join(Dir.pwd, "spec/images/ruby-logo.png"))
 
