@@ -6,7 +6,7 @@ module Allure
     # @param [Allure::TestResultContainer] test_result_container
     # @return [Allure::TestResultContainer]
     def start_test_container(test_result_container)
-      test_result_container.start = Util.timestamp
+      test_result_container.start = ResultUtils.timestamp
       @current_test_result_container = test_result_container
     end
 
@@ -23,7 +23,7 @@ module Allure
         return logger.error("Could not stop test container, no container is running.")
       end
 
-      @current_test_result_container.stop = Util.timestamp
+      @current_test_result_container.stop = ResultUtils.timestamp
       file_writer.write_test_result_container(@current_test_result_container)
       clear_current_test_container
     end
@@ -36,7 +36,7 @@ module Allure
         return logger.error("Could not start test case, test container is not started")
       end
 
-      test_result.start = Util.timestamp
+      test_result.start = ResultUtils.timestamp
       test_result.stage = Stage::RUNNING
       test_result.labels.push(ResultUtils.thread_label, ResultUtils.host_label)
       @current_test_result_container.children.push(test_result.uuid)
@@ -52,7 +52,7 @@ module Allure
     def stop_test_case
       return logger.error("Could not stop test case, no test case is running") unless @current_test_case
 
-      @current_test_case.stop = Util.timestamp
+      @current_test_case.stop = ResultUtils.timestamp
       @current_test_case.stage = Stage::FINISHED
       file_writer.write_test_result(@current_test_case)
       clear_current_test_case
@@ -64,7 +64,7 @@ module Allure
     def start_test_step(step_result)
       return logger.error("Could not start test step, no test case is running") unless @current_test_case
 
-      step_result.start = Util.timestamp
+      step_result.start = ResultUtils.timestamp
       step_result.stage = Stage::RUNNING
       @current_test_case.steps.push(step_result)
       @current_test_step = step_result
@@ -79,7 +79,7 @@ module Allure
     def stop_test_step
       return logger.error("Could not stop test step, no step is running") unless @current_test_step
 
-      @current_test_step.stop = Util.timestamp
+      @current_test_step.stop = ResultUtils.timestamp
       @current_test_step.stage = Stage::FINISHED
       clear_current_test_step
     end
@@ -111,7 +111,7 @@ module Allure
         return false
       end
 
-      fixture_result.start = Util.timestamp
+      fixture_result.start = ResultUtils.timestamp
       fixture_result.stage = Stage::RUNNING
     end
 
@@ -129,7 +129,7 @@ module Allure
     def stop_fixture
       return logger.error("Could not stop fixture, fixture is not started") unless @current_fixture
 
-      @current_fixture.stop = Util.timestamp
+      @current_fixture.stop = ResultUtils.timestamp
       @current_fixture.stage = Stage::FINISHED
       clear_current_fixture
     end

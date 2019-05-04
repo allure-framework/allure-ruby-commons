@@ -4,6 +4,7 @@ PATH
     allure-ruby-commons (2.10.0.beta1)
       json (>= 1.8, < 3)
       require_all (~> 2.0)
+      rubyzip (~> 1.2)
       uuid (~> 2.3.9)
 
 GEM
@@ -89,7 +90,6 @@ DEPENDENCIES
   rspec (~> 3.8)
   rubocop (~> 0.67)
   rubocop-performance (~> 1.1)
-  rubyzip (~> 1.2)
   solargraph (~> 0.32)
 
 BUNDLED WITH

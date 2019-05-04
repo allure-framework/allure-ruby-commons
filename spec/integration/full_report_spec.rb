@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "../downloader"
-
 describe Allure do
   let(:lifecycle) { Allure.lifecycle }
 
@@ -59,7 +57,7 @@ describe Allure do
   end
 
   it "generate valid json", integration: true do
-    allure_cli = Allure.allure_bin
+    allure_cli = Allure::Util.allure_cli
     expect(`#{allure_cli} generate -c #{Allure::Config.output_dir} -o reports/allure-report`.chomp).to(
       eq("Report successfully generated to reports/allure-report"),
     )
