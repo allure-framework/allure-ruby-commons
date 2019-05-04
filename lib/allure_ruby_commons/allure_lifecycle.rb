@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Allure
+  # Main class for creating and writing allure results
   class AllureLifecycle
     # Start test result container
     # @param [Allure::TestResultContainer] test_result_container
@@ -10,6 +11,13 @@ module Allure
       @current_test_result_container = test_result_container
     end
 
+    # @example Update current test container
+    #   update_test_container do |container|
+    #     container.stage = Allure::Stage::FINISHED
+    #   end
+    # @yieldparam [Allure::TestResultContainer] current test result container
+    # @yieldreturn [void]
+    # @return [void]
     def update_test_container
       unless @current_test_result_container
         return logger.error("Could not update test container, no container is running.")
@@ -18,6 +26,8 @@ module Allure
       yield(@current_test_result_container)
     end
 
+    # Stop current test container and write result
+    # @return [void]
     def stop_test_container
       unless @current_test_result_container
         return logger.error("Could not stop test container, no container is running.")
@@ -28,7 +38,7 @@ module Allure
       clear_current_test_container
     end
 
-    # Starts test case
+    # Start test case and add to current test container
     # @param [Allure::TestResult] test_result
     # @return [Allure::TestResult]
     def start_test_case(test_result)
@@ -43,12 +53,21 @@ module Allure
       @current_test_case = test_result
     end
 
+    # @example Update current test case
+    #   update_test_container do |test_case|
+    #     test_case.status = Allure::Status::FAILED
+    #   end
+    # @yieldparam [Allure::TestResult] current test
+    # @yieldreturn [void]
+    # @return [void]
     def update_test_case
       return logger.error("Could not update test case, no test case running") unless @current_test_case
 
       yield(@current_test_case)
     end
 
+    # Stop current test case and write result
+    # @return [void]
     def stop_test_case
       return logger.error("Could not stop test case, no test case is running") unless @current_test_case
 
@@ -58,9 +77,9 @@ module Allure
       clear_current_test_case
     end
 
-    # Starts test step
+    # Start test step and add to current test case
     # @param [Allure::StepResult] step_result
-    # @return [Allure]
+    # @return [Allure::StepResult]
     def start_test_step(step_result)
       return logger.error("Could not start test step, no test case is running") unless @current_test_case
 
@@ -70,12 +89,21 @@ module Allure
       @current_test_step = step_result
     end
 
+    # @example Update current test step
+    #   update_test_container do |test_step|
+    #     test_step.status = Allure::Status::BROKEN
+    #   end
+    # @yieldparam [Allure::StepResult] current test step
+    # @yieldreturn [void]
+    # @return [void]
     def update_test_step
       return logger.error("Could not update test step, no step is running") unless @current_test_step
 
       yield(@current_test_step)
     end
 
+    # Stop current test step
+    # @return [void]
     def stop_test_step
       return logger.error("Could not stop test step, no step is running") unless @current_test_step
 
@@ -97,7 +125,7 @@ module Allure
     # @param [Allure::FixtureResult] fixture_result
     # @return [Allure::FixtureResult]
     def start_tear_down_fixture(fixture_result)
-      start_fixture(fixture_result)
+      start_fixture(fixture_result) || return
       @current_test_result_container.afters.push(fixture_result)
       @current_fixture = fixture_result
     end
@@ -115,10 +143,12 @@ module Allure
       fixture_result.stage = Stage::RUNNING
     end
 
-    # Update current fixture
-    # @yield [fixture] Set fixture values
-    #
+    # @example Update current fixture
+    #   update_test_container do |fixture|
+    #     fixture.status = Allure::Status::BROKEN
+    #   end
     # @yieldparam [Allure::FixtureResult] current fixture
+    # @yieldreturn [void]
     # @return [void]
     def update_fixture
       return logger.error("Could not update fixture, fixture is not started") unless @current_fixture

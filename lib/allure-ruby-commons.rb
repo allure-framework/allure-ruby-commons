@@ -5,6 +5,7 @@ require "require_all"
 require "uuid"
 require_rel "allure_ruby_commons/**/*rb"
 
+# Namespace for classes that handle allure report generation and different framework adapters
 module Allure
   class << self
     # Get thread specific allure lifecycle object
@@ -20,9 +21,8 @@ module Allure
     end
 
     # Set allure configuration
-    # @yield [config]
-    #
     # @yieldparam [Allure::Config]
+    # @yieldreturn [void]
     # @return [void]
     def configure
       yield(Config)

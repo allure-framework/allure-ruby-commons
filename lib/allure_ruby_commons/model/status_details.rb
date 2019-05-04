@@ -2,6 +2,11 @@
 
 module Allure
   class StatusDetails < JSONable
+    # @param [Boolean] known
+    # @param [Boolean] muted
+    # @param [Boolean] flaky
+    # @param [String] message
+    # @param [String] trace
     def initialize(known: false, muted: false, flaky: false, message: nil, trace: nil)
       @known = known
       @muted = muted
