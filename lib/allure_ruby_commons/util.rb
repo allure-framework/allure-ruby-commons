@@ -12,12 +12,14 @@ module Allure
                       "#{Version::ALLURE}/allure-commandline-#{Version::ALLURE}.zip"
 
     class << self
+      # Download allure bin if appropriate version is not in path
+      # @return [String] allure executable
       def allure_cli
         return "allure" if Version::ALLURE == `allure --version`.chomp
 
         cli_dir = File.join(".allure", "allure-#{Version::ALLURE}")
         zip = File.join(".allure", "allure.zip")
-        bin = File.join(cli_dir, "bin/allure")
+        bin = File.join(cli_dir, "bin", "allure")
 
         FileUtils.mkpath(".allure")
         download_allure(zip) unless File.exist?(zip) || File.exist?(bin)

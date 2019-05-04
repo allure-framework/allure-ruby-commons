@@ -2,15 +2,12 @@
 
 require "logger"
 
-describe Allure::AllureLifecycle do
-  let(:lifecycle) { Allure::AllureLifecycle.new }
-  let(:file_writer) { double("FileWriter") }
-  let(:logger) { double("Logger") }
+describe "AllureLifecycle::TestResultContainer" do
+  include_context "lifecycle"
+  include_context "lifecycle mocks"
 
   before do
     @result_container = start_test_container(lifecycle, "Test Container")
-    allow(Allure::FileWriter).to receive(:new).and_return(file_writer)
-    allow(Logger).to receive(:new).and_return(logger)
   end
 
   it "starts test result container" do

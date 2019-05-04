@@ -1,13 +1,8 @@
 # frozen_string_literal: true
 
-describe Allure::AllureLifecycle do
-  let(:lifecycle) { Allure::AllureLifecycle.new }
-  let(:file_writer) { double("FileWriter") }
-  let(:logger) { double("Logger") }
-
-  before do
-    allow(Logger).to receive(:new).and_return(logger)
-  end
+describe "AllureLifecycle::TestStepResult" do
+  include_context "lifecycle"
+  include_context "lifecycle mocks"
 
   context "without exceptions" do
     before do

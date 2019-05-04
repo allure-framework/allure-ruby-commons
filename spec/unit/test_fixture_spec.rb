@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Allure::AllureLifecycle do
-  let(:lifecycle) { Allure::AllureLifecycle.new }
-  let(:logger) { double("Logger") }
+describe "AllureLifecycle::Fixtures" do
+  include_context "lifecycle"
+  include_context "lifecycle mocks"
 
   before do
     allow(Logger).to receive(:new).and_return(logger)

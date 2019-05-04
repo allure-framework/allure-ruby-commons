@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe Allure do
-  let(:lifecycle) { Allure.lifecycle }
+describe "allure-ruby-commons" do
+  include_context "lifecycle"
 
   before(:all) do
     Allure.configure do |conf|
@@ -9,9 +9,8 @@ describe Allure do
       conf.issue_link_pattern = "http://jira.com/{}"
       conf.tms_link_pattern = "http://jira.com/{}"
     end
+    FileUtils.remove_dir(Allure::Config.output_dir)
   end
-
-  before(:all) { FileUtils.remove_dir(Allure::Config.output_dir) }
 
   before do
     image = File.new(File.join(Dir.pwd, "spec/images/ruby-logo.png"))

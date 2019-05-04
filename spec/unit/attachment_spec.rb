@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-describe Allure::AllureLifecycle do
-  let(:lifecycle) { Allure::AllureLifecycle.new }
-  let(:file_writer) { double("FileWriter") }
-  let(:logger) { double("Logger") }
+describe "Lifecycle:Attachments" do
+  include_context "lifecycle"
+  include_context "lifecycle mocks"
+
   let(:attach_opts) do
     {
       name: "Test Attachment",
@@ -15,9 +15,6 @@ describe Allure::AllureLifecycle do
   before do
     @result_container = start_test_container(lifecycle, "Container name")
     @test_case = start_test_case(lifecycle, name: "Test case", full_name: "Full name")
-
-    allow(Allure::FileWriter).to receive(:new).and_return(file_writer)
-    allow(Logger).to receive(:new).and_return(logger)
   end
 
   it "adds attachment to fixture" do
