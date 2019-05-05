@@ -7,8 +7,8 @@ Gem::Specification.new do |s|
   s.name = "allure-ruby-commons"
   s.version = Allure::Version::STRING
   s.platform = Gem::Platform::RUBY
-  s.authors = ["Andrejs Cunskis"]
-  s.email = ["andrejs.cunskis@gmail.com"]
+  s.authors = ["Andrejs Cunskis", "Ilya Sadykov"]
+  s.email = ["andrejs.cunskis@gmail.com", "smecsia@yandex-team.ru"]
   s.description = %(This is a helper library containing the basics for any ruby-based Allure adaptor.)
   s.summary = "allure_ruby_commons:#{Allure::Version::STRING}"
   s.homepage = "http://allure.qatools.ru"
