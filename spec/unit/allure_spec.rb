@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "pry"
-
 describe Allure do
   include_context "lifecycle"
 
