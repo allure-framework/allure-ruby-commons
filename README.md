@@ -45,3 +45,23 @@ Additional methods in [Allure](lib/allure-ruby-commons.rb) exist to add various 
 Allure.add_attachment(name: "attachment", source: "Some string", type: Allure::ContentType::TXT, test_case: false)
 Allure.add_link(name: "Custom Url", url: "http://www.github.com")
 ```
+
+## Testing
+
+Install dependencies:
+
+```bash
+bundle install
+```
+
+Run tests:
+
+```bash
+bundle exec rspec
+```
+
+## Building
+
+```bash
+gem build allure-ruby-commons.gemspec
+```
