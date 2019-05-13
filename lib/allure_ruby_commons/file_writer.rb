@@ -31,7 +31,7 @@ module Allure
     private
 
     def output_dir
-      @output_dir ||= FileUtils.mkpath(Allure::Config.output_dir).first
+      @output_dir ||= FileUtils.mkpath(Allure::Config.results_directory).first
     end
 
     def write(name, source)

@@ -125,11 +125,11 @@ module Allure
       private
 
       def tms_url(value)
-        Allure.configuration.tms_link_pattern.sub("{}", value)
+        Allure.configuration.link_tms_pattern.sub("{}", value)
       end
 
       def issue_url(value)
-        Allure.configuration.issue_link_pattern.sub("{}", value)
+        Allure.configuration.link_issue_pattern.sub("{}", value)
       end
 
       def expectation_error?(exception)

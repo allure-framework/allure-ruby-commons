@@ -199,14 +199,6 @@ module Allure
       file_writer.write_attachment(source, attachment)
     end
 
-    # Add link to test case
-    # @param [String] name
-    # @param [String] url
-    # @return [void]
-    def add_link(name, url)
-      @current_test_case.links.push(Link.new("custom", name, url))
-    end
-
     private
 
     def logger

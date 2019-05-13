@@ -13,8 +13,8 @@ describe "Lifecycle:Attachments" do
   end
 
   before do
-    @result_container = start_test_container(lifecycle, "Container name")
-    @test_case = start_test_case(lifecycle, name: "Test case", full_name: "Full name")
+    @result_container = start_test_container("Container name")
+    @test_case = start_test_case(name: "Test case", full_name: "Full name")
   end
 
   it "adds attachment to fixture" do
@@ -33,7 +33,7 @@ describe "Lifecycle:Attachments" do
   it "adds attachment to step" do
     expect(file_writer).to receive(:write_attachment).with("string attachment", duck_type(:name, :source, :type))
 
-    test_step = start_test_step(lifecycle, name: "Step name", descrption: "step description")
+    test_step = start_test_step(name: "Step name", descrption: "step description")
     lifecycle.add_attachment(**attach_opts)
     attachment = test_step.attachments.last
 
@@ -58,7 +58,7 @@ describe "Lifecycle:Attachments" do
   it "adds attachment to test explicitly" do
     expect(file_writer).to receive(:write_attachment).with("string attachment", duck_type(:name, :source, :type))
 
-    test_step = start_test_step(lifecycle, name: "Step name", descrption: "step description")
+    test_step = start_test_step(name: "Step name", descrption: "step description")
     lifecycle.add_attachment(**attach_opts, test_case: true)
     attachment = @test_case.attachments.last
 

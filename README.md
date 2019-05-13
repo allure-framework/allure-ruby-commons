@@ -18,11 +18,11 @@ Following configuration options are supported:
 
 ```ruby
     Allure.configure do |c|
-      c.output_dir = "/whatever/you/like"
+      c.results_directory = "/whatever/you/like"
       c.logging_level = Logger::INFO
       # these are used for creating links to bugs or test cases where {} is replaced with keys of relevant items
-      c.tms_link_pattern = "http://www.jira.com/browse/{}"
-      c.issue_link_pattern = "http://www.jira.com/browse/{}"
+      c.link_tms_pattern = "http://www.jira.com/browse/{}"
+      c.link_issue_pattern = "http://www.jira.com/browse/{}"
     end
 ```
 
@@ -39,9 +39,9 @@ Example of building a simple test case can be seen in [integration spec](spec/in
 
 Convenience method `Allure.lifecycle` exists for getting thread specific allure lifecycle instance.
 
-Some helper methods exist for most common lifecycle actions which could be used outside of respective framework implementations.
+Additional methods in [Allure](lib/allure-ruby-commons.rb) exist to add various custom attributes to test report.
 
 ```ruby
 Allure.add_attachment(name: "attachment", source: "Some string", type: Allure::ContentType::TXT, test_case: false)
-Allure.add_link("Custom Url", "http://www.github.com")
+Allure.add_link(name: "Custom Url", url: "http://www.github.com")
 ```

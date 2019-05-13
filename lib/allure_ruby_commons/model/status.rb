@@ -5,8 +5,6 @@ module Allure
     FAILED = :failed
     BROKEN = :broken
     PASSED = :passed
-    PENDING = :pending
-    CANCELED = :canceled
     SKIPPED = :skipped
   end
 end

@@ -4,15 +4,15 @@ require "logger"
 
 module Allure
   class Config
-    DEFAULT_OUTPUT_DIR = "reports/allure-results"
+    DEFAULT_RESULTS_DIRECTORY = "reports/allure-results"
     DEFAULT_LOGGING_LEVEL = Logger::INFO
 
     class << self
-      attr_accessor :tms_link_pattern, :issue_link_pattern
-      attr_writer :output_dir, :logging_level
+      attr_accessor :link_tms_pattern, :link_issue_pattern
+      attr_writer :results_directory, :logging_level
 
-      def output_dir
-        @output_dir || DEFAULT_OUTPUT_DIR
+      def results_directory
+        @results_directory || DEFAULT_RESULTS_DIRECTORY
       end
 
       def logging_level

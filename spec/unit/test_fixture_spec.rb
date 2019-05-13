@@ -10,11 +10,11 @@ describe "AllureLifecycle::Fixtures" do
 
   context "without exceptions" do
     before do
-      @result_container = start_test_container(lifecycle, "Test container")
+      @result_container = start_test_container("Test container")
     end
 
     it "starts prepare fixture" do
-      fixture_result = start_fixture(lifecycle, "Prepare fixture", "prepare")
+      fixture_result = start_fixture("Prepare fixture", "prepare")
 
       aggregate_failures "Fixture should be started" do
         expect(fixture_result.start).to be_a(Numeric)
@@ -24,7 +24,7 @@ describe "AllureLifecycle::Fixtures" do
     end
 
     it "starts teardown fixture" do
-      fixture_result = start_fixture(lifecycle, "Teardown fixture", "tear_down")
+      fixture_result = start_fixture("Teardown fixture", "tear_down")
 
       aggregate_failures "Fixture should be started" do
         expect(fixture_result.start).to be_a(Numeric)
@@ -34,14 +34,14 @@ describe "AllureLifecycle::Fixtures" do
     end
 
     it "updates fixture" do
-      fixture_result = start_fixture(lifecycle, "Prepare fixture", "prepare")
-      lifecycle.update_fixture { |fixture| fixture.status = Allure::Status::CANCELED }
+      fixture_result = start_fixture("Prepare fixture", "prepare")
+      lifecycle.update_fixture { |fixture| fixture.status = Allure::Status::SKIPPED }
 
-      expect(fixture_result.status).to eq(Allure::Status::CANCELED)
+      expect(fixture_result.status).to eq(Allure::Status::SKIPPED)
     end
 
     it "stops fixture" do
-      fixture_result = start_fixture(lifecycle, "Prepare fixture", "prepare")
+      fixture_result = start_fixture("Prepare fixture", "prepare")
       lifecycle.stop_fixture
 
       aggregate_failures "Should update parameters" do
@@ -55,11 +55,11 @@ describe "AllureLifecycle::Fixtures" do
     it "no running container" do
       expect(logger).to receive(:error).with(/Could not start fixture/).and_return(true)
 
-      start_fixture(lifecycle, "Prepare fixture", "prepare")
+      start_fixture("Prepare fixture", "prepare")
     end
 
     it "no running fixture" do
-      start_test_container(lifecycle, "Test container")
+      start_test_container("Test container")
 
       expect(logger).to receive(:error).with(/Could not stop fixture/).and_return(true)
       expect(logger).to receive(:error).with(/Could not update fixture/).and_return(true)

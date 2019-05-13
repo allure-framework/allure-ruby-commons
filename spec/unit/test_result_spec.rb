@@ -6,8 +6,8 @@ describe "AllureLifecycle::TestCaseResult" do
 
   context "without exceptions" do
     before do
-      @result_container = start_test_container(lifecycle, "Test Container")
-      @test_case = start_test_case(lifecycle, name: "Test Case")
+      @result_container = start_test_container("Test Container")
+      @test_case = start_test_case(name: "Test Case")
     end
 
     it "starts test case" do
@@ -53,11 +53,11 @@ describe "AllureLifecycle::TestCaseResult" do
     it "no running container" do
       expect(logger).to receive(:error).with(/Could not start test case/)
 
-      start_test_case(lifecycle, name: "Test Case")
+      start_test_case(name: "Test Case")
     end
 
     it "no running test" do
-      start_test_container(lifecycle, "Test Container")
+      start_test_container("Test Container")
 
       expect(logger).to receive(:error).with(/Could not update test/)
       expect(logger).to receive(:error).with(/Could not stop test/)

@@ -7,15 +7,15 @@ require "allure-ruby-commons"
 RSpec.shared_context("lifecycle") do
   let(:lifecycle) { Allure::AllureLifecycle.new }
 
-  def start_test_container(lifecycle, name)
+  def start_test_container(name)
     lifecycle.start_test_container(Allure::TestResultContainer.new(name: name))
   end
 
-  def start_fixture(lifecycle, name, type)
+  def start_fixture(name, type)
     lifecycle.public_send("start_#{type}_fixture", Allure::FixtureResult.new(name: name))
   end
 
-  def add_fixture(lifecycle, name, type)
+  def add_fixture(name, type)
     fixture_result = lifecycle.public_send("start_#{type}_fixture", Allure::FixtureResult.new(name: name))
     lifecycle.update_fixture { |fixture| fixture.status = Allure::Status::PASSED }
     lifecycle.stop_fixture
@@ -23,11 +23,11 @@ RSpec.shared_context("lifecycle") do
     fixture_result
   end
 
-  def start_test_case(lifecycle, **options)
+  def start_test_case(**options)
     lifecycle.start_test_case(Allure::TestResult.new(**options))
   end
 
-  def start_test_step(lifecycle, **options)
+  def start_test_step(**options)
     lifecycle.start_test_step(Allure::StepResult.new(**options))
   end
 end

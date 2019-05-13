@@ -7,7 +7,7 @@ describe "AllureLifecycle::TestResultContainer" do
   include_context "lifecycle mocks"
 
   before do
-    @result_container = start_test_container(lifecycle, "Test Container")
+    @result_container = start_test_container("Test Container")
   end
 
   it "starts test result container" do

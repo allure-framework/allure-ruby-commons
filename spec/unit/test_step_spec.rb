@@ -6,9 +6,9 @@ describe "AllureLifecycle::TestStepResult" do
 
   context "without exceptions" do
     before do
-      @result_container = start_test_container(lifecycle, "Test Container")
-      @test_case = start_test_case(lifecycle, name: "Test case", full_name: "Full name")
-      @test_step = start_test_step(lifecycle, name: "Step name", descrption: "step description")
+      @result_container = start_test_container("Test Container")
+      @test_case = start_test_case(name: "Test case", full_name: "Full name")
+      @test_step = start_test_step(name: "Step name", descrption: "step description")
 
       allow(Allure::FileWriter).to receive(:new).and_return(file_writer)
     end
@@ -21,9 +21,9 @@ describe "AllureLifecycle::TestStepResult" do
     end
 
     it "updates test step" do
-      lifecycle.update_test_step { |step| step.status = Allure::Status::CANCELED }
+      lifecycle.update_test_step { |step| step.status = Allure::Status::SKIPPED }
 
-      expect(@test_step.status).to eq(Allure::Status::CANCELED)
+      expect(@test_step.status).to eq(Allure::Status::SKIPPED)
     end
 
     it "stops test step" do
@@ -40,12 +40,12 @@ describe "AllureLifecycle::TestStepResult" do
     it "no running test case" do
       expect(logger).to receive(:error).with(/no test case is running/)
 
-      start_test_step(lifecycle, name: "Step name", descrption: "step description")
+      start_test_step(name: "Step name", descrption: "step description")
     end
 
     it "no running test step" do
-      start_test_container(lifecycle, "Test Container")
-      start_test_case(lifecycle, name: "Test case", full_name: "Full name")
+      start_test_container("Test Container")
+      start_test_case(name: "Test case", full_name: "Full name")
 
       expect(logger).to receive(:error).with(/no step is running/)
       expect(logger).to receive(:error).with(/no step is running/)
