@@ -2,23 +2,21 @@ pipeline {
   agent { docker 'ruby:2.6.3' }
   parameters {
     booleanParam(name: 'RELEASE', defaultValue: false, description: 'Perform release?')
-    string(name: 'RELEASE_VERSION', defaultValue: '', description: 'Release version')
   }
   stages {
     stage('Install') {
       steps { sh 'bundle install' }
     }
     stage('Lint') {
-      steps { sh 'bundle exec rubocop' }
+      steps { sh 'bundle exec rake rubocop' }
     }
     stage('Test') {
-      steps { sh 'bundle exec rspec' }
+      steps { sh 'bundle exec rake spec' }
     }
     stage('Release') {
       when { expression { return params.RELEASE } }
       steps {
-        sh 'gem build allure-ruby-commons.gemspec'
-        sh 'gem push allure-ruby-commons-${RELEASE_VERSION}.gem'
+        sh  'bundle exec rake release'
       }
     }
     post {
