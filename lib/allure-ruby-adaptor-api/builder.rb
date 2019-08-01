@@ -21,7 +21,7 @@ module AllureRubyAdaptorApi
             LOGGER.debug "Resuming case_or_suite #{suite} with labels #{labels}"
           else 
             LOGGER.debug "Starting case_or_suite #{suite} with labels #{labels}"
-		    self.suites[suite] = {
+            self.suites[suite] = {
                 :title => suite,
                 :start => timestamp,
                 :tests => {},
