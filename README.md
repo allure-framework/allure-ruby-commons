@@ -1,4 +1,7 @@
-# Allure Ruby Adaptor API
+# [DEPRECATED]
+## Please follow https://github.com/allure-framework/allure-ruby
+Allure Ruby Adaptor API
+====================
 
 This is a helper library containing the basics for any ruby-based Allure adaptor.
 Using it you can easily implement the adaptor for your favourite ruby testing library or
